@@ -7,11 +7,11 @@ columns_to_keep = ['hospital_pk', 'collection_week', 'state', 'ccn', 'hospital_n
 
 print('Starting csv file download...')
 
-url_to_csv = 'https://healthdata.gov/sites/default/files/reported_hospital_capacity_admissions_facility-level_weekly_average_timeseries_20201207.csv'
+url_to_csv = 'https://healthdata.gov/sites/default/files/reported_hospital_capacity_admissions_facility_level_weekly_average_timeseries_20201214.csv'
 urllib.request.urlretrieve(url_to_csv, 'latest-data.csv')
 
 print('Extracting columns from csv...')
 
-df = pd.read_csv('latest-data.csv')
+df = pd.read_csv('latest-data.csv', dtype=str)
 df = df[columns_to_keep]
 df.to_csv("processed-data.csv", index=False, index_label=False)
