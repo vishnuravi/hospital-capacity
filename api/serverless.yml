@@ -1,0 +1,6 @@
+app: hospital-capacity-api
+component: express
+name: hospital-capacity-api
+
+inputs:
+  src: ./
