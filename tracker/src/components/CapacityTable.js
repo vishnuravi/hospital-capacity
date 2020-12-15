@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Table } from 'react-bootstrap';
+import USStateSelector from './USStateSelector';
 
 export default function CapacityTable() {
 
     const [data, setData] = useState([]);
-    const [state, setState] = useState("NJ");
+    const [state, setState] = useState("NY");
     const [isLoading, setIsLoading] = useState(false);
 
     const getData = async () => {
@@ -50,12 +51,12 @@ export default function CapacityTable() {
 
     const toTitleCase = (str) => {
         return str.replace(
-          /\w\S*/g,
-          function(txt) {
-            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-          }
+            /\w\S*/g,
+            function (txt) {
+                return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+            }
         );
-      }
+    }
 
     useEffect(() => {
         getData();
@@ -63,33 +64,37 @@ export default function CapacityTable() {
 
     return (
         <>
+            <USStateSelector setState={setState} state={state} />
             { isLoading ?
                 "Loading..."
                 :
-                <Table bordered hover>
-                    <thead>
-                        <tr>
-                            <td>Hospital Name</td>
-                            <td>City</td>
-                            <td>% of adult ICU occupied</td>
-                            <td>% of admitted patients with suspected or confirmed COVID</td>
-                            <td>Reported Date</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {data.map((row) => {
-                            return (
-                                <tr>
-                                    <td>{toTitleCase(row.hospital_name)}</td>
-                                    <td>{toTitleCase(row.city)}</td>
-                                    <td>{percentICUFull(row)}</td>
-                                    <td>{percentCOVID(row)}</td>
-                                    <td>{new Date(row.collection_week).toLocaleDateString()}</td>
-                                </tr>
-                            )
-                        })}
-                    </tbody>
-                </Table>
+                state !== "" &&
+                <>
+                    <Table bordered hover>
+                        <thead>
+                            <tr>
+                                <td>Hospital Name</td>
+                                <td>City</td>
+                                <td>% of adult ICU occupied</td>
+                                <td>% of admitted patients with COVID</td>
+                                <td>Reported Date</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {data.map((row) => {
+                                return (
+                                    <tr>
+                                        <td>{toTitleCase(row.hospital_name)}</td>
+                                        <td>{toTitleCase(row.city)}</td>
+                                        <td>{percentICUFull(row)}</td>
+                                        <td>{percentCOVID(row)}</td>
+                                        <td>{new Date(row.collection_week).toLocaleDateString()}</td>
+                                    </tr>
+                                )
+                            })}
+                        </tbody>
+                    </Table>
+                </>
             }
         </>
     )
