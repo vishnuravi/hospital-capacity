@@ -1,18 +1,19 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Table } from 'react-bootstrap';
-import USStateSelector from './USStateSelector';
+import { Spinner } from 'react-bootstrap';
+import BootstrapTable from 'react-bootstrap-table-next';
+import StateSelect from './StateSelect';
 
 export default function CapacityTable() {
 
     const [data, setData] = useState([]);
-    const [state, setState] = useState("NY");
+    const [state, setState] = useState();
     const [isLoading, setIsLoading] = useState(false);
 
     const getData = async () => {
         setIsLoading(true);
         try {
-            const results = await axios.get(`${process.env.REACT_APP_API_URL}/hospitals/state/${state}`);
+            const results = await axios.get(`${process.env.REACT_APP_API_URL}/hospitals/state/${state.value}`);
             const data = results.data;
 
             // extract only the latest data
@@ -20,7 +21,21 @@ export default function CapacityTable() {
                 index === self.findIndex((row) => (row.hospital_pk === data.hospital_pk))
             );
 
-            setData(latestData);
+            // calculate metrics and format data
+            const formattedData = latestData.map((row) => {
+                return (
+                    {
+                        hospital_pk: row.hospital_pk,
+                        hospital_name: toTitleCase(row.hospital_name),
+                        city: toTitleCase(row.city),
+                        percent_icu_full: percentICUFull(row),
+                        percent_covid: percentCOVID(row),
+                        collection_week: new Date(row.collection_week).toLocaleDateString()
+                    }
+                )
+            })
+
+            setData(formattedData);
             setIsLoading(false);
         } catch (error) {
             console.log(error);
@@ -33,9 +48,11 @@ export default function CapacityTable() {
         return value === -999999;
     }
 
+    const NO_DATA = "Incomplete data"
+
     const percentICUFull = (row) => {
         if (isRedacted(row.staffed_adult_icu_bed_occupancy) || isRedacted(row.total_staffed_adult_icu_beds) || !row.staffed_adult_icu_bed_occupancy || !row.total_staffed_adult_icu_beds) {
-            return "Data not available";
+            return NO_DATA;
         } else {
             return ((row.staffed_adult_icu_bed_occupancy / row.total_staffed_adult_icu_beds) * 100).toFixed() + '%';
         }
@@ -43,7 +60,7 @@ export default function CapacityTable() {
 
     const percentCOVID = (row) => {
         if (isRedacted(row.total_adult_patients_hospitalized_confirmed_and_suspected_covid) || isRedacted(row.all_adult_hospital_inpatient_bed_occupied) || !row.total_adult_patients_hospitalized_confirmed_and_suspected_covid || !row.all_adult_hospital_inpatient_bed_occupied) {
-            return "Data not available";
+            return NO_DATA;
         } else {
             return ((row.total_adult_patients_hospitalized_confirmed_and_suspected_covid / row.all_adult_hospital_inpatient_bed_occupied) * 100).toFixed() + '%';
         }
@@ -62,39 +79,41 @@ export default function CapacityTable() {
         getData();
     }, [state])
 
+
+    const columns = [{
+        dataField: 'hospital_name',
+        text: 'Hospital Name',
+        sort: true
+    }, {
+        dataField: 'city',
+        text: 'City',
+        sort: true
+    }, {
+        dataField: 'percent_icu_full',
+        text: '% adult ICU beds occupied',
+    },
+    {
+        dataField: 'percent_covid',
+        text: '% suspected or confirmed COVID',
+    },
+    {
+        dataField: 'collection_week',
+        text: 'Week of',
+    }];
+
     return (
         <>
-            <USStateSelector setState={setState} state={state} />
+            <StateSelect setState={setState} state={state} isLoading={isLoading} />
+            <br />
             { isLoading ?
-                "Loading..."
+                <div className="pt-4">
+                    <Spinner animation="border" role="status">
+                        <span className="sr-only">Loading...</span>
+                    </Spinner>
+                </div>
                 :
-                state !== "" &&
-                <>
-                    <Table bordered hover>
-                        <thead>
-                            <tr>
-                                <td>Hospital Name</td>
-                                <td>City</td>
-                                <td>% of adult ICU occupied</td>
-                                <td>% of admitted patients with COVID</td>
-                                <td>Reported Date</td>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {data.map((row) => {
-                                return (
-                                    <tr>
-                                        <td>{toTitleCase(row.hospital_name)}</td>
-                                        <td>{toTitleCase(row.city)}</td>
-                                        <td>{percentICUFull(row)}</td>
-                                        <td>{percentCOVID(row)}</td>
-                                        <td>{new Date(row.collection_week).toLocaleDateString()}</td>
-                                    </tr>
-                                )
-                            })}
-                        </tbody>
-                    </Table>
-                </>
+                state &&
+                <BootstrapTable keyField='hospital_name' data={data} columns={columns} />
             }
         </>
     )
