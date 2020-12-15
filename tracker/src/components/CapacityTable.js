@@ -5,7 +5,7 @@ import { Table } from 'react-bootstrap';
 export default function CapacityTable() {
 
     const [data, setData] = useState([]);
-    const [state, setState] = useState("NY");
+    const [state, setState] = useState("NJ");
     const [isLoading, setIsLoading] = useState(false);
 
     const getData = async () => {
@@ -41,12 +41,21 @@ export default function CapacityTable() {
     }
 
     const percentCOVID = (row) => {
-        if (isRedacted(row.total_adult_patients_hospitalized_confirmed_and_suspected) || isRedacted(row.all_adult_hospital_inpatient_bed_occupied) || !row.total_adult_patients_hospitalized_confirmed_and_suspected || !row.all_adult_hospital_inpatient_bed_occupied) {
+        if (isRedacted(row.total_adult_patients_hospitalized_confirmed_and_suspected_covid) || isRedacted(row.all_adult_hospital_inpatient_bed_occupied) || !row.total_adult_patients_hospitalized_confirmed_and_suspected_covid || !row.all_adult_hospital_inpatient_bed_occupied) {
             return "Data not available";
         } else {
-            return ((row.total_adult_patients_hospitalized_confirmed_and_suspected / row.all_adult_hospital_inpatient_bed_occupied) * 100).toFixed() + '%';
+            return ((row.total_adult_patients_hospitalized_confirmed_and_suspected_covid / row.all_adult_hospital_inpatient_bed_occupied) * 100).toFixed() + '%';
         }
     }
+
+    const toTitleCase = (str) => {
+        return str.replace(
+          /\w\S*/g,
+          function(txt) {
+            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+          }
+        );
+      }
 
     useEffect(() => {
         getData();
@@ -63,7 +72,7 @@ export default function CapacityTable() {
                             <td>Hospital Name</td>
                             <td>City</td>
                             <td>% of adult ICU occupied</td>
-                            <td>% admitted patients with suspected or confirmed COVID</td>
+                            <td>% of admitted patients with suspected or confirmed COVID</td>
                             <td>Reported Date</td>
                         </tr>
                     </thead>
@@ -71,8 +80,8 @@ export default function CapacityTable() {
                         {data.map((row) => {
                             return (
                                 <tr>
-                                    <td>{row.hospital_name}</td>
-                                    <td>{row.city}</td>
+                                    <td>{toTitleCase(row.hospital_name)}</td>
+                                    <td>{toTitleCase(row.city)}</td>
                                     <td>{percentICUFull(row)}</td>
                                     <td>{percentCOVID(row)}</td>
                                     <td>{new Date(row.collection_week).toLocaleDateString()}</td>
