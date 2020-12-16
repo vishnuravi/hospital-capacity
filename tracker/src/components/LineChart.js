@@ -11,7 +11,9 @@ const LineChart = ({ hospital_pk }) => {
 
         // get all records for the particular hospital
         const results = await axios.get(`${process.env.REACT_APP_API_URL}/hospitals/id/${hospital_pk}`);
-        const dataArray = results.data;
+        const dataArray = results.data.reverse();
+
+        // TODO: remove redacted data points.
 
         // set the data for the axes
         setXData(dataArray.map(point => new Date(point.collection_week).toLocaleDateString()));
@@ -41,7 +43,10 @@ const LineChart = ({ hospital_pk }) => {
                     {
                         ticks: {
                             beginAtZero: true,
-                            suggestedMax: 100
+                            suggestedMax: 100,
+                            callback: function(value, index, values) {
+                                return value + '%';
+                            }
                         },
                     },
                 ],

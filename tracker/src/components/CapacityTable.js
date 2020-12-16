@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Badge } from 'react-bootstrap';
 import BootstrapTable from 'react-bootstrap-table-next';
 import StateSelect from './StateSelect';
 import LineChart from './LineChart';
@@ -126,6 +127,7 @@ export default function CapacityTable() {
             <br />
             { !isLoading && state &&
                 <div id="table-container">
+                    <Badge variant="light" className="mb-1">💡 click on any row to visualize trend</Badge>
                     <BootstrapTable
                         wrapperClasses="table-responsive"
                         hover
