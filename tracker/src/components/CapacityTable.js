@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Badge } from 'react-bootstrap';
 import BootstrapTable from 'react-bootstrap-table-next';
 import StateSelect from './StateSelect';
+import CitySelect from './CitySelect';
 import LineChart from './LineChart';
 import {
     percentBedsFull,
@@ -13,8 +14,10 @@ import { toTitleCase, weekToString } from '../helpers/formatters';
 
 export default function CapacityTable() {
 
+    const [data, setData] = useState();
     const [tableData, setTableData] = useState([]);
     const [state, setState] = useState();
+    const [city, setCity] = useState();
     const [isLoading, setIsLoading] = useState(false);
 
     const getData = async () => {
@@ -23,12 +26,15 @@ export default function CapacityTable() {
             const results = await axios.get(`${process.env.REACT_APP_API_URL}/hospitals/state/${state.value}`);
             const data = results.data;
 
-            // extract only the latest data
-            const latestData = data.filter((data, index, self) =>
+            // extract only acute care facilities
+            const acuteCareData = data.filter((row) => row.hospital_subtype === "Short Term" || row.hospital_subtype === "Critical Access Hospital");
+
+            // extract only the latest week's data
+            const latestData = acuteCareData.filter((data, index, self) =>
                 index === self.findIndex((row) => (row.hospital_pk === data.hospital_pk))
             );
 
-            // calculate metrics and format data
+            // calculate metrics and format data for display in table
             const formattedData = latestData.map((row) => {
                 const percent_beds_full = percentBedsFull(row);
                 const percent_icu_full = percentICUFull(row);
@@ -48,6 +54,8 @@ export default function CapacityTable() {
                 )
             })
 
+            // load the data into the state and display it in the table
+            setData(formattedData);
             setTableData(formattedData);
             setIsLoading(false);
         } catch (error) {
@@ -56,9 +64,16 @@ export default function CapacityTable() {
         }
     };
 
+    // fetch new data and clear city selection when user selects a new state
     useEffect(() => {
         getData();
+        setCity();
     }, [state])
+
+    // filter out data when user selects a new city
+    useEffect(() => {
+        state && city ? setTableData(data.filter((row) => row.city.toLowerCase() === city.value.toLowerCase())) : setTableData(data);
+    }, [city])
 
     // sorting function for table
     const sortFunc = (a, b, order, dataField, rowA, rowB) => {
@@ -126,18 +141,21 @@ export default function CapacityTable() {
             <StateSelect setState={setState} state={state} isLoading={isLoading} />
             <br />
             { !isLoading && state &&
-                <div id="table-container">
-                    <h5><Badge variant="light" className="mb-1">💡 click on any row to graph trend</Badge></h5>
-                    <BootstrapTable
-                        wrapperClasses="table-responsive"
-                        hover
-                        keyField='hospital_pk'
-                        data={tableData}
-                        columns={columns}
-                        defaultSorted={defaultSorted}
-                        expandRow={expandRow}
-                    />
-                </div>
+                <>
+                    <CitySelect setCity={setCity} city={city} data={tableData} isLoading={isLoading} />
+                    <div id="table-container">
+                        <h5><Badge variant="light" className="mb-1 mt-1 col-lg-4 mx-auto">💡 click on any row to graph trend</Badge></h5>
+                        <BootstrapTable
+                            wrapperClasses="table-responsive"
+                            hover
+                            keyField='hospital_pk'
+                            data={tableData}
+                            columns={columns}
+                            defaultSorted={defaultSorted}
+                            expandRow={expandRow}
+                        />
+                    </div>
+                </>
             }
         </>
     )
