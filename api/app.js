@@ -54,7 +54,7 @@ app.get('/hospitals/state/:state', async (req, res) => {
 
 // Get all records for a hospital by id
 app.get('/hospitals/id/:id', async (req, res) => {
-  const result = await models.CapacityData.findAll({ where: { hospital_pk: req.params.id }, order: [['collection_week', 'DESC']]});
+  const result = await models.CapacityData.findAll({ where: { hospital_pk: req.params.id }, order: [['collection_week', 'ASC']]});
   res.send(result);
 });
 

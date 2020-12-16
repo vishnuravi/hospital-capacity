@@ -5,8 +5,8 @@ function App() {
   return (
     <div className="App">
       <Container>
-        <h2 className="text-center mt-2 mb-4">Hospital Capacity Tracker</h2>
-        <p className="text-center">📊 Data from <a href="https://healthdata.gov/dataset/covid-19-reported-patient-impact-and-hospital-capacity-facility" target="_blank">healthdata.gov</a>. Tracker created by <a href="https://vishnu.io" target="_blank">Vishnu Ravi</a> 👨‍⚕️.</p>
+        <h1 className="text-center my-4">Hospital Capacity Tracker</h1>
+        <p className="text-center">created by <a href="https://vishnu.io" target="_blank">Vishnu Ravi</a> 👨‍⚕️ with data <a href="https://healthdata.gov/dataset/covid-19-reported-patient-impact-and-hospital-capacity-facility" target="_blank">from healthdata.gov</a></p>
         <CapacityTable />
       </Container>
     </div>
