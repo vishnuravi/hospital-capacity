@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Badge } from 'react-bootstrap';
 import BootstrapTable from 'react-bootstrap-table-next';
 import StateSelect from './StateSelect';
+import LineChart from './LineChart';
 
 export default function CapacityTable() {
 
@@ -47,7 +49,7 @@ export default function CapacityTable() {
         return value === -999999;
     }
 
-    const NO_DATA = "Incomplete data"
+    const NO_DATA = "-"
 
     const percentICUFull = (row) => {
         if (isRedacted(row.staffed_adult_icu_bed_occupancy) || isRedacted(row.total_staffed_adult_icu_beds) || !row.staffed_adult_icu_bed_occupancy || !row.total_staffed_adult_icu_beds) {
@@ -79,7 +81,14 @@ export default function CapacityTable() {
     }, [state])
 
 
-    const columns = [{
+    const columns = [
+    {
+        dataField: 'hospital_pk',
+        text: 'Hospital ID',
+        sort: true,
+        hidden: true
+    },
+    {
         dataField: 'hospital_name',
         text: 'Hospital Name',
         sort: true
@@ -89,23 +98,46 @@ export default function CapacityTable() {
         sort: true
     }, {
         dataField: 'percent_icu_full',
-        text: '% adult ICU beds occupied',
+        text: '% of adult ICU beds occupied',
     },
     {
         dataField: 'percent_covid',
-        text: '% suspected or confirmed COVID',
+        text: '% of admitted patients with suspected or confirmed COVID',
     },
     {
         dataField: 'collection_week',
-        text: 'Week of',
+        text: 'Week',
     }];
+
+    const rowEvents = {
+        onClick: (e, row, rowIndex) => {
+            console.log(row.hospital_name);
+        }
+    }
+
+    const expandRow = {
+        renderer: row => (
+            <LineChart data={data} hospital_pk={row.hospital_pk} />
+        )
+      };
 
     return (
         <>
             <StateSelect setState={setState} state={state} isLoading={isLoading} />
             <br />
             { !isLoading && state &&
-                <BootstrapTable keyField='hospital_name' data={data} columns={columns} />
+                <div id="table-container">
+                    <Badge variant="light" className="mb-1">💡 click on any row to visualize trend</Badge>
+                    <BootstrapTable
+                        wrapperClasses="table-responsive"
+                        hover
+                        keyField='hospital_pk'
+                        data={data}
+                        columns={columns}
+                        rowEvents={rowEvents}
+                        expandRow={expandRow}
+                    />
+                </div>
             }
         </>
     )
