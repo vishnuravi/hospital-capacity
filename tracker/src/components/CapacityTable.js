@@ -39,7 +39,7 @@ export default function CapacityTable() {
                 const percent_beds_full = percentBedsFull(row);
                 const percent_icu_full = percentICUFull(row);
                 const percent_covid = percentCOVID(row);
-                const empty = '-'
+                const empty = '-';
 
                 return (
                     {
@@ -66,13 +66,19 @@ export default function CapacityTable() {
 
     // fetch new data and clear city selection when user selects a new state
     useEffect(() => {
-        getData();
         setCity();
+        getData();
     }, [state])
 
-    // filter out data when user selects a new city
+    //filter out data when user selects a new city
     useEffect(() => {
-        state && city ? setTableData(data.filter((row) => row.city.toLowerCase() === city.value.toLowerCase())) : setTableData(data);
+        if (state) {
+            if (city) {
+                setTableData(data.filter((row) => row.city.toLowerCase() === city.value.toLowerCase()))
+            } else {
+                setTableData(data);
+            }
+        }
     }, [city])
 
     // sorting function for table
