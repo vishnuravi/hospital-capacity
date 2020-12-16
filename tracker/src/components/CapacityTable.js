@@ -4,6 +4,12 @@ import { Badge } from 'react-bootstrap';
 import BootstrapTable from 'react-bootstrap-table-next';
 import StateSelect from './StateSelect';
 import LineChart from './LineChart';
+import {
+    percentBedsFull,
+    percentICUFull,
+    percentCOVID
+} from '../metrics';
+import { toTitleCase } from '../helpers/formatters';
 
 export default function CapacityTable() {
 
@@ -46,48 +52,6 @@ export default function CapacityTable() {
             setIsLoading(false);
         }
     };
-
-    const isRedacted = (value) => {
-        // redacted values in dataset are tagged as -999999
-        return value === -999999;
-    }
-
-    const isRatioDataMissing = (a, b) => isRedacted(a) || isRedacted(b) || !a || !b;
-
-    const NO_DATA = "-"
-
-    const percentBedsFull = (row) => {
-        if (isRatioDataMissing(row.all_adult_hospital_inpatient_beds, row.all_adult_hospital_inpatient_bed_occupied)) {
-            return NO_DATA;
-        } else {
-            return ((row.all_adult_hospital_inpatient_bed_occupied / row.all_adult_hospital_inpatient_beds) * 100).toFixed() + '%';
-        }
-    }
-
-    const percentICUFull = (row) => {
-        if (isRatioDataMissing(row.staffed_adult_icu_bed_occupancy, row.total_staffed_adult_icu_beds)) {
-            return NO_DATA;
-        } else {
-            return ((row.staffed_adult_icu_bed_occupancy / row.total_staffed_adult_icu_beds) * 100).toFixed() + '%';
-        }
-    }
-
-    const percentCOVID = (row) => {
-        if (isRatioDataMissing(row.total_adult_patients_hospitalized_confirmed_and_suspected_covid, row.all_adult_hospital_inpatient_bed_occupied)) {
-            return NO_DATA;
-        } else {
-            return ((row.total_adult_patients_hospitalized_confirmed_and_suspected_covid / row.all_adult_hospital_inpatient_bed_occupied) * 100).toFixed() + '%';
-        }
-    }
-
-    const toTitleCase = (str) => {
-        return str.replace(
-            /\w\S*/g,
-            function (txt) {
-                return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-            }
-        );
-    }
 
     useEffect(() => {
         getData();
