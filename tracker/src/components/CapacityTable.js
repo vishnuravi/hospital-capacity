@@ -60,45 +60,45 @@ export default function CapacityTable() {
 
     // data settings for capacity table
     const columns = [
-    {
-        dataField: 'hospital_pk',
-        text: 'Hospital ID',
-        sort: true,
-        hidden: true
-    },
-    {
-        dataField: 'hospital_name',
-        text: 'Hospital Name',
-        sort: true
-    }, 
-    {
-        dataField: 'city',
-        text: 'City',
-        sort: true
-    }, 
-    {
-        dataField: 'percent_beds_full',
-        text: '% of adult inpatient beds occupied'
-    }, 
-    {
-        dataField: 'percent_icu_full',
-        text: '% of adult ICU beds occupied',
-    },
-    {
-        dataField: 'percent_covid',
-        text: '% of admitted patients with suspected or confirmed COVID',
-    },
-    {
-        dataField: 'collection_week',
-        text: 'Week',
-    }];
+        {
+            dataField: 'hospital_pk',
+            text: 'Hospital ID',
+            sort: true,
+            hidden: true
+        },
+        {
+            dataField: 'hospital_name',
+            text: 'Hospital Name',
+            sort: true
+        },
+        {
+            dataField: 'city',
+            text: 'City',
+            sort: true
+        },
+        {
+            dataField: 'percent_beds_full',
+            text: '% of adult inpatient beds occupied'
+        },
+        {
+            dataField: 'percent_icu_full',
+            text: '% of adult ICU beds occupied',
+        },
+        {
+            dataField: 'percent_covid',
+            text: '% of admitted patients with suspected or confirmed COVID',
+        },
+        {
+            dataField: 'collection_week',
+            text: 'Week',
+        }];
 
     // component to show when a row is expanded
     const expandRow = {
         renderer: row => (
             <LineChart data={data} hospital_pk={row.hospital_pk} />
         )
-      };
+    };
 
     return (
         <>
@@ -106,7 +106,7 @@ export default function CapacityTable() {
             <br />
             { !isLoading && state &&
                 <div id="table-container">
-                    <Badge variant="light" className="mb-1">💡 click on any row to visualize trend</Badge>
+                    <h5><Badge variant="light" className="mb-1">💡 click on any row to graph trend</Badge></h5>
                     <BootstrapTable
                         wrapperClasses="table-responsive"
                         hover

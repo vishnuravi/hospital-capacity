@@ -1,6 +1,11 @@
 import { Line } from 'react-chartjs-2';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import {
+    percentBedsFull,
+    percentICUFull,
+    percentCOVID
+} from '../metrics';
 
 const LineChart = ({ hospital_pk }) => {
 
@@ -28,9 +33,9 @@ const LineChart = ({ hospital_pk }) => {
 
         // set the data for the axes
         setXData(dataArray.map(row => new Date(row.collection_week).toLocaleDateString('en-US', { month: 'short', day: 'numeric'})));
-        setY1Data(dataArray.map(row => ((row.staffed_adult_icu_bed_occupancy / row.total_staffed_adult_icu_beds) * 100).toFixed(2)));
-        setY2Data(dataArray.map(row => ((row.all_adult_hospital_inpatient_bed_occupied / row.all_adult_hospital_inpatient_beds) * 100).toFixed(2)));
-        setY3Data(dataArray.map(row => ((row.total_adult_patients_hospitalized_confirmed_and_suspected_covid / row.all_adult_hospital_inpatient_bed_occupied) * 100).toFixed(2)));
+        setY1Data(dataArray.map(row => percentBedsFull(row)));
+        setY2Data(dataArray.map(row => percentICUFull(row)));
+        setY3Data(dataArray.map(row => percentCOVID(row)));
     }
 
         useEffect(() => {
