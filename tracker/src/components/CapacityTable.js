@@ -9,11 +9,11 @@ import {
     percentICUFull,
     percentCOVID
 } from '../metrics';
-import { toTitleCase } from '../helpers/formatters';
+import { toTitleCase, weekToString } from '../helpers/formatters';
 
 export default function CapacityTable() {
 
-    const [data, setData] = useState([]);
+    const [tableData, setTableData] = useState([]);
     const [state, setState] = useState();
     const [isLoading, setIsLoading] = useState(false);
 
@@ -28,24 +28,27 @@ export default function CapacityTable() {
                 index === self.findIndex((row) => (row.hospital_pk === data.hospital_pk))
             );
 
-            console.log(latestData);
-
             // calculate metrics and format data
             const formattedData = latestData.map((row) => {
+                const percent_beds_full = percentBedsFull(row);
+                const percent_icu_full = percentICUFull(row);
+                const percent_covid = percentCOVID(row);
+                const empty = '-'
+
                 return (
                     {
                         hospital_pk: row.hospital_pk,
                         hospital_name: toTitleCase(row.hospital_name),
                         city: toTitleCase(row.city),
-                        percent_beds_full: percentBedsFull(row),
-                        percent_icu_full: percentICUFull(row),
-                        percent_covid: percentCOVID(row),
-                        collection_week: new Date(row.collection_week).toLocaleDateString()
+                        percent_beds_full: percent_beds_full ? percent_beds_full + '%' : empty,
+                        percent_icu_full: percent_icu_full ? percent_icu_full + '%' : empty,
+                        percent_covid: percent_covid ? percent_covid + '%' : empty,
+                        collection_week: weekToString(row.collection_week)
                     }
                 )
             })
 
-            setData(formattedData);
+            setTableData(formattedData);
             setIsLoading(false);
         } catch (error) {
             console.log(error);
@@ -57,8 +60,20 @@ export default function CapacityTable() {
         getData();
     }, [state])
 
+    // sorting function for table
+    const sortFunc = (a, b, order, dataField, rowA, rowB) => {
+        if (order === 'asc') {
+            return a - b;
+        }
+        return b - a; // desc
+    };
 
     // data settings for capacity table
+    const defaultSorted = [{
+        dataField: 'hospital_name',
+        order: 'asc'
+    }];
+
     const columns = [
         {
             dataField: 'hospital_pk',
@@ -78,25 +93,31 @@ export default function CapacityTable() {
         },
         {
             dataField: 'percent_beds_full',
-            text: '% of adult inpatient beds occupied'
+            text: '% of adult inpatient beds occupied',
+            sort: false,
+            sortFunc: sortFunc
         },
         {
             dataField: 'percent_icu_full',
             text: '% of adult ICU beds occupied',
+            sort: false,
+            sortFunc: sortFunc
         },
         {
             dataField: 'percent_covid',
             text: '% of admitted patients with suspected or confirmed COVID',
+            sort: false,
+            sortFunc: sortFunc
         },
         {
             dataField: 'collection_week',
-            text: 'Week',
+            text: 'Latest Collection Week',
         }];
 
     // component to show when a row is expanded
     const expandRow = {
         renderer: row => (
-            <LineChart data={data} hospital_pk={row.hospital_pk} />
+            <LineChart hospital_pk={row.hospital_pk} />
         )
     };
 
@@ -111,8 +132,9 @@ export default function CapacityTable() {
                         wrapperClasses="table-responsive"
                         hover
                         keyField='hospital_pk'
-                        data={data}
+                        data={tableData}
                         columns={columns}
+                        defaultSorted={defaultSorted}
                         expandRow={expandRow}
                     />
                 </div>
