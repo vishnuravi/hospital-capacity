@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Spinner } from 'react-bootstrap';
 import BootstrapTable from 'react-bootstrap-table-next';
 import StateSelect from './StateSelect';
 
@@ -105,14 +104,7 @@ export default function CapacityTable() {
         <>
             <StateSelect setState={setState} state={state} isLoading={isLoading} />
             <br />
-            { isLoading ?
-                <div className="pt-4">
-                    <Spinner animation="border" role="status">
-                        <span className="sr-only">Loading...</span>
-                    </Spinner>
-                </div>
-                :
-                state &&
+            { !isLoading && state &&
                 <BootstrapTable keyField='hospital_name' data={data} columns={columns} />
             }
         </>

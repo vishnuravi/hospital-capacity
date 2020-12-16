@@ -67,8 +67,9 @@ const StateSelect = ({ state, setState, isLoading }) => {
                 value={state}
                 onChange={selectedState => handleStateChange(selectedState)}
                 options={states} 
-                isClearable={true}
                 isLoading={isLoading}
+                placeholder="Choose a state"
+                className="mx-auto col-lg-4"
             />
         </>
     )
