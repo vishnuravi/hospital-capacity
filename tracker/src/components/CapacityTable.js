@@ -4,6 +4,12 @@ import { Badge } from 'react-bootstrap';
 import BootstrapTable from 'react-bootstrap-table-next';
 import StateSelect from './StateSelect';
 import LineChart from './LineChart';
+import {
+    percentBedsFull,
+    percentICUFull,
+    percentCOVID
+} from '../metrics';
+import { toTitleCase } from '../helpers/formatters';
 
 export default function CapacityTable() {
 
@@ -22,6 +28,8 @@ export default function CapacityTable() {
                 index === self.findIndex((row) => (row.hospital_pk === data.hospital_pk))
             );
 
+            console.log(latestData);
+
             // calculate metrics and format data
             const formattedData = latestData.map((row) => {
                 return (
@@ -29,6 +37,7 @@ export default function CapacityTable() {
                         hospital_pk: row.hospital_pk,
                         hospital_name: toTitleCase(row.hospital_name),
                         city: toTitleCase(row.city),
+                        percent_beds_full: percentBedsFull(row),
                         percent_icu_full: percentICUFull(row),
                         percent_covid: percentCOVID(row),
                         collection_week: new Date(row.collection_week).toLocaleDateString()
@@ -44,82 +53,52 @@ export default function CapacityTable() {
         }
     };
 
-    const isRedacted = (value) => {
-        // redacted values in dataset are tagged as -999999
-        return value === -999999;
-    }
-
-    const NO_DATA = "-"
-
-    const percentICUFull = (row) => {
-        if (isRedacted(row.staffed_adult_icu_bed_occupancy) || isRedacted(row.total_staffed_adult_icu_beds) || !row.staffed_adult_icu_bed_occupancy || !row.total_staffed_adult_icu_beds) {
-            return NO_DATA;
-        } else {
-            return ((row.staffed_adult_icu_bed_occupancy / row.total_staffed_adult_icu_beds) * 100).toFixed() + '%';
-        }
-    }
-
-    const percentCOVID = (row) => {
-        if (isRedacted(row.total_adult_patients_hospitalized_confirmed_and_suspected_covid) || isRedacted(row.all_adult_hospital_inpatient_bed_occupied) || !row.total_adult_patients_hospitalized_confirmed_and_suspected_covid || !row.all_adult_hospital_inpatient_bed_occupied) {
-            return NO_DATA;
-        } else {
-            return ((row.total_adult_patients_hospitalized_confirmed_and_suspected_covid / row.all_adult_hospital_inpatient_bed_occupied) * 100).toFixed() + '%';
-        }
-    }
-
-    const toTitleCase = (str) => {
-        return str.replace(
-            /\w\S*/g,
-            function (txt) {
-                return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-            }
-        );
-    }
-
     useEffect(() => {
         getData();
     }, [state])
 
 
+    // data settings for capacity table
     const columns = [
-    {
-        dataField: 'hospital_pk',
-        text: 'Hospital ID',
-        sort: true,
-        hidden: true
-    },
-    {
-        dataField: 'hospital_name',
-        text: 'Hospital Name',
-        sort: true
-    }, {
-        dataField: 'city',
-        text: 'City',
-        sort: true
-    }, {
-        dataField: 'percent_icu_full',
-        text: '% of adult ICU beds occupied',
-    },
-    {
-        dataField: 'percent_covid',
-        text: '% of admitted patients with suspected or confirmed COVID',
-    },
-    {
-        dataField: 'collection_week',
-        text: 'Week',
-    }];
+        {
+            dataField: 'hospital_pk',
+            text: 'Hospital ID',
+            sort: true,
+            hidden: true
+        },
+        {
+            dataField: 'hospital_name',
+            text: 'Hospital Name',
+            sort: true
+        },
+        {
+            dataField: 'city',
+            text: 'City',
+            sort: true
+        },
+        {
+            dataField: 'percent_beds_full',
+            text: '% of adult inpatient beds occupied'
+        },
+        {
+            dataField: 'percent_icu_full',
+            text: '% of adult ICU beds occupied',
+        },
+        {
+            dataField: 'percent_covid',
+            text: '% of admitted patients with suspected or confirmed COVID',
+        },
+        {
+            dataField: 'collection_week',
+            text: 'Week',
+        }];
 
-    const rowEvents = {
-        onClick: (e, row, rowIndex) => {
-            console.log(row.hospital_name);
-        }
-    }
-
+    // component to show when a row is expanded
     const expandRow = {
         renderer: row => (
             <LineChart data={data} hospital_pk={row.hospital_pk} />
         )
-      };
+    };
 
     return (
         <>
@@ -127,14 +106,13 @@ export default function CapacityTable() {
             <br />
             { !isLoading && state &&
                 <div id="table-container">
-                    <Badge variant="light" className="mb-1">💡 click on any row to visualize trend</Badge>
+                    <h5><Badge variant="light" className="mb-1">💡 click on any row to graph trend</Badge></h5>
                     <BootstrapTable
                         wrapperClasses="table-responsive"
                         hover
                         keyField='hospital_pk'
                         data={data}
                         columns={columns}
-                        rowEvents={rowEvents}
                         expandRow={expandRow}
                     />
                 </div>

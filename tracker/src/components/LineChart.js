@@ -1,11 +1,18 @@
 import { Line } from 'react-chartjs-2';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import {
+    percentBedsFull,
+    percentICUFull,
+    percentCOVID
+} from '../metrics';
 
 const LineChart = ({ hospital_pk }) => {
 
     const [xData, setXData] = useState();
-    const [yData, setYData] = useState();
+    const [y1Data, setY1Data] = useState();
+    const [y2Data, setY2Data] = useState();
+    const [y3Data, setY3Data] = useState();
 
     const getData = async () => {
 
@@ -13,11 +20,22 @@ const LineChart = ({ hospital_pk }) => {
         const results = await axios.get(`${process.env.REACT_APP_API_URL}/hospitals/id/${hospital_pk}`);
         const dataArray = results.data.reverse();
 
-        // TODO: remove redacted data points.
+
+        // remove redacted (negative) data points.
+        dataArray.map((row) => {
+            return Object.keys(row).forEach((key) => {
+                if(row[key] < 0){
+                    console.log(key + " " + row[key]);
+                    row[key] = null;
+                }
+            })
+        })
 
         // set the data for the axes
-        setXData(dataArray.map(point => new Date(point.collection_week).toLocaleDateString()));
-        setYData(dataArray.map(point => ((point.staffed_adult_icu_bed_occupancy / point.total_staffed_adult_icu_beds) * 100).toFixed(2)));
+        setXData(dataArray.map(row => new Date(row.collection_week).toLocaleDateString('en-US', { month: 'short', day: 'numeric'})));
+        setY1Data(dataArray.map(row => percentBedsFull(row)));
+        setY2Data(dataArray.map(row => percentICUFull(row)));
+        setY3Data(dataArray.map(row => percentCOVID(row)));
     }
 
         useEffect(() => {
@@ -28,11 +46,25 @@ const LineChart = ({ hospital_pk }) => {
             labels: xData,
             datasets: [
                 {
-                    label: '% ICU Filled',
-                    data: yData,
+                    label: '% ICU Beds Filled',
+                    data: y1Data,
                     fill: false,
-                    backgroundColor: 'rgb(255, 99, 132)',
-                    borderColor: 'rgba(255, 99, 132, 0.2)',
+                    backgroundColor: 'rgb(255, 255, 0)',
+                    borderColor: 'rgba(255, 128, 0, 0.2)',
+                },
+                {
+                    label: '% Inpatient Beds Filled',
+                    data: y2Data,
+                    fill: false,
+                    backgroundColor: 'rgb(0,0,204)',
+                    borderColor: 'rgba(0, 102, 204, 0.2)',
+                },
+                {
+                    label: '% of admitted patients with suspected/confirmed COVID',
+                    data: y3Data,
+                    fill: false,
+                    backgroundColor: 'rgb(255, 0, 0)',
+                    borderColor: 'rgba(255, 102, 102, 0.2)'
                 },
             ],
         }
