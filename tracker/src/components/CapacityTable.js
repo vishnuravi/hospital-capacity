@@ -22,6 +22,8 @@ export default function CapacityTable() {
                 index === self.findIndex((row) => (row.hospital_pk === data.hospital_pk))
             );
 
+            console.log(latestData);
+
             // calculate metrics and format data
             const formattedData = latestData.map((row) => {
                 return (
@@ -29,6 +31,7 @@ export default function CapacityTable() {
                         hospital_pk: row.hospital_pk,
                         hospital_name: toTitleCase(row.hospital_name),
                         city: toTitleCase(row.city),
+                        percent_beds_full: percentBedsFull(row),
                         percent_icu_full: percentICUFull(row),
                         percent_covid: percentCOVID(row),
                         collection_week: new Date(row.collection_week).toLocaleDateString()
@@ -49,10 +52,20 @@ export default function CapacityTable() {
         return value === -999999;
     }
 
+    const isRatioDataMissing = (a, b) => isRedacted(a) || isRedacted(b) || !a || !b;
+
     const NO_DATA = "-"
 
+    const percentBedsFull = (row) => {
+        if (isRatioDataMissing(row.all_adult_hospital_inpatient_beds, row.all_adult_hospital_inpatient_bed_occupied)) {
+            return NO_DATA;
+        } else {
+            return ((row.all_adult_hospital_inpatient_bed_occupied / row.all_adult_hospital_inpatient_beds) * 100).toFixed() + '%';
+        }
+    }
+
     const percentICUFull = (row) => {
-        if (isRedacted(row.staffed_adult_icu_bed_occupancy) || isRedacted(row.total_staffed_adult_icu_beds) || !row.staffed_adult_icu_bed_occupancy || !row.total_staffed_adult_icu_beds) {
+        if (isRatioDataMissing(row.staffed_adult_icu_bed_occupancy, row.total_staffed_adult_icu_beds)) {
             return NO_DATA;
         } else {
             return ((row.staffed_adult_icu_bed_occupancy / row.total_staffed_adult_icu_beds) * 100).toFixed() + '%';
@@ -60,7 +73,7 @@ export default function CapacityTable() {
     }
 
     const percentCOVID = (row) => {
-        if (isRedacted(row.total_adult_patients_hospitalized_confirmed_and_suspected_covid) || isRedacted(row.all_adult_hospital_inpatient_bed_occupied) || !row.total_adult_patients_hospitalized_confirmed_and_suspected_covid || !row.all_adult_hospital_inpatient_bed_occupied) {
+        if (isRatioDataMissing(row.total_adult_patients_hospitalized_confirmed_and_suspected_covid, row.all_adult_hospital_inpatient_bed_occupied)) {
             return NO_DATA;
         } else {
             return ((row.total_adult_patients_hospitalized_confirmed_and_suspected_covid / row.all_adult_hospital_inpatient_bed_occupied) * 100).toFixed() + '%';
@@ -81,6 +94,7 @@ export default function CapacityTable() {
     }, [state])
 
 
+    // data settings for capacity table
     const columns = [
     {
         dataField: 'hospital_pk',
@@ -92,11 +106,17 @@ export default function CapacityTable() {
         dataField: 'hospital_name',
         text: 'Hospital Name',
         sort: true
-    }, {
+    }, 
+    {
         dataField: 'city',
         text: 'City',
         sort: true
-    }, {
+    }, 
+    {
+        dataField: 'percent_beds_full',
+        text: '% of adult inpatient beds occupied'
+    }, 
+    {
         dataField: 'percent_icu_full',
         text: '% of adult ICU beds occupied',
     },
@@ -109,12 +129,7 @@ export default function CapacityTable() {
         text: 'Week',
     }];
 
-    const rowEvents = {
-        onClick: (e, row, rowIndex) => {
-            console.log(row.hospital_name);
-        }
-    }
-
+    // component to show when a row is expanded
     const expandRow = {
         renderer: row => (
             <LineChart data={data} hospital_pk={row.hospital_pk} />
@@ -134,7 +149,6 @@ export default function CapacityTable() {
                         keyField='hospital_pk'
                         data={data}
                         columns={columns}
-                        rowEvents={rowEvents}
                         expandRow={expandRow}
                     />
                 </div>
