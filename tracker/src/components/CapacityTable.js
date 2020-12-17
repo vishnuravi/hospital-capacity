@@ -155,12 +155,12 @@ export default function CapacityTable() {
     return (
         <>
             <StateSelect setState={setState} state={state} isLoading={isLoading} />
-            <br />
             { !isLoading && state &&
                 <>
                     <CitySelect setCity={setCity} city={city} data={tableData} isLoading={isLoading} />
                     <div id="table-container">
-                        <h5><Badge variant="light" className="mb-1 mt-1 col-lg-4 mx-auto">💡 click on any row to graph trend</Badge></h5>
+                        <p className="lead text-center mt-3 mb-3">
+                            📈 click on any row to graph trend</p>
                         <BootstrapTable
                             wrapperClasses="table-responsive"
                             hover

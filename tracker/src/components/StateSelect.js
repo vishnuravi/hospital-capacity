@@ -15,7 +15,7 @@ const StateSelect = ({ state, setState, isLoading }) => {
                 options={stateList.states} 
                 isLoading={isLoading}
                 placeholder="Choose a state"
-                className="mx-auto col-lg-4"
+                className="mx-auto col-lg-4 mb-1"
             />
         </>
     )
