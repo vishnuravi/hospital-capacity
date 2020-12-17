@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Badge } from 'react-bootstrap';
 import BootstrapTable from 'react-bootstrap-table-next';
 import StateSelect from './StateSelect';
-import CitySelect from './CitySelect';
+//import CitySelect from './CitySelect';
+import CountySelect from './CountySelect';
 import LineChart from './LineChart';
 import {
     percentBedsFull,
@@ -19,6 +19,7 @@ export default function CapacityTable() {
     const [tableData, setTableData] = useState([]);
     const [state, setState] = useState();
     const [city, setCity] = useState();
+    const [county, setCounty] = useState();
     const [isLoading, setIsLoading] = useState(false);
 
     const getData = async () => {
@@ -49,6 +50,7 @@ export default function CapacityTable() {
                         hospital_pk: row.hospital_pk,
                         hospital_name: toTitleCase(row.hospital_name),
                         city: toTitleCase(row.city),
+                        fips_code: row.fips_code,
                         percent_beds_full: percent_beds_full ? percent_beds_full + '%' : empty,
                         percent_icu_full: percent_icu_full ? percent_icu_full + '%' : empty,
                         percent_covid: percent_covid ? percent_covid + '%' : empty,
@@ -70,7 +72,8 @@ export default function CapacityTable() {
 
     // fetch new data and clear city selection when user selects a new state
     useEffect(() => {
-        setCity();
+        //setCity();
+        setCounty();
         getData();
     }, [state])
 
@@ -78,12 +81,23 @@ export default function CapacityTable() {
     useEffect(() => {
         if (state) {
             if (city) {
-                setTableData(data.filter((row) => row.city.toLowerCase() === city.value.toLowerCase()))
+                setTableData(data.filter((row) => row.city.toLowerCase() === city.value.toLowerCase()));
             } else {
                 setTableData(data);
             }
         }
     }, [city])
+
+    //filter out data when user selects a new county
+    useEffect(() => {
+        if (state) {
+            if (county) {
+                setTableData(data.filter((row) => row.fips_code.includes(county.value)));
+            } else {
+                setTableData(data);
+            }
+        }
+    }, [county])
 
     // sorting function for table
     const sortFunc = (a, b, order, dataField, rowA, rowB) => {
@@ -157,7 +171,8 @@ export default function CapacityTable() {
             <StateSelect setState={setState} state={state} isLoading={isLoading} />
             { !isLoading && state &&
                 <>
-                    <CitySelect setCity={setCity} city={city} data={tableData} isLoading={isLoading} />
+                    {/* <CitySelect setCity={setCity} city={city} data={tableData} isLoading={isLoading} /> */}
+                    <CountySelect setCounty={setCounty} county={county} state={state} data={tableData} isLoading={isLoading} /> 
                     <div id="table-container">
                         <p className="lead text-center mt-3 mb-3">
                             📈 click on any row to graph trend</p>
