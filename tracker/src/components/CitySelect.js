@@ -27,7 +27,7 @@ const CitySelect = ({ city, setCity, data, isLoading }) => {
         <>
             <Select
                 value={city}
-                onChange={selectedState => handleStateChange(selectedState)}
+                onChange={selectedCity => handleStateChange(selectedCity)}
                 options={cityList}
                 isLoading={isLoading}
                 isClearable={true}
