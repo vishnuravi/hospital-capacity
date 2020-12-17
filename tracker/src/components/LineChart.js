@@ -27,7 +27,6 @@ const LineChart = ({ hospital_pk }) => {
         dataArray.map((row) => {
             return Object.keys(row).forEach((key) => {
                 if(row[key] < 0){
-                    console.log(key + " " + row[key]);
                     row[key] = null;
                 }
             })

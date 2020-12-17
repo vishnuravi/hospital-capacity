@@ -175,7 +175,7 @@ export default function CapacityTable() {
                     <CountySelect setCounty={setCounty} county={county} state={state} data={tableData} isLoading={isLoading} /> 
                     <div id="table-container">
                         <p className="lead text-center mt-3 mb-3">
-                            📈 click on any row to graph trend</p>
+                            📈 Click on any row to graph data from July 2020 to present.</p>
                         <BootstrapTable
                             wrapperClasses="table-responsive"
                             hover
