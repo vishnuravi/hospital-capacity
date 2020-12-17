@@ -4,7 +4,7 @@ This project visualizes US COVID-19 facility-level capacity data released [from 
 
 Live version can be seen at [hospitalbed.space](https://hospitalbed.space).
 
-<img src="https://user-images.githubusercontent.com/1212163/102426332-2241ec00-3fdd-11eb-96db-994ff8ef187f.JPG" width="500" />
+<img src="https://user-images.githubusercontent.com/1212163/102548191-48709600-4088-11eb-8840-9cda2815c64b.JPG" width="500" />
 
 # Project Structure
 
