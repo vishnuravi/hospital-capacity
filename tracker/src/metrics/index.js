@@ -30,3 +30,11 @@ export const percentCOVID = (row) => {
         return ((row.total_adult_patients_hospitalized_confirmed_and_suspected_covid / row.all_adult_hospital_inpatient_bed_occupied) * 100).toFixed();
     }
 }
+
+export const percentCOVID_ICU = (row) => {
+    if (isRatioDataMissing(row.staffed_icu_adult_patients_confirmed_and_suspected_covid, row.total_staffed_adult_icu_beds)) {
+        return NO_DATA;
+    } else {
+        return ((row.staffed_icu_adult_patients_confirmed_and_suspected_covid / row.total_staffed_adult_icu_beds) * 100).toFixed();
+    }
+}

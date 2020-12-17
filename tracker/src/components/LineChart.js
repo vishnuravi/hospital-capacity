@@ -4,7 +4,8 @@ import axios from 'axios';
 import {
     percentBedsFull,
     percentICUFull,
-    percentCOVID
+    percentCOVID,
+    percentCOVID_ICU
 } from '../metrics';
 
 const LineChart = ({ hospital_pk }) => {
@@ -13,6 +14,7 @@ const LineChart = ({ hospital_pk }) => {
     const [y1Data, setY1Data] = useState();
     const [y2Data, setY2Data] = useState();
     const [y3Data, setY3Data] = useState();
+    const [y4Data, setY4Data] = useState();
 
     const getData = async () => {
 
@@ -36,6 +38,7 @@ const LineChart = ({ hospital_pk }) => {
         setY1Data(dataArray.map(row => percentBedsFull(row)));
         setY2Data(dataArray.map(row => percentICUFull(row)));
         setY3Data(dataArray.map(row => percentCOVID(row)));
+        setY4Data(dataArray.map(row => percentCOVID_ICU(row)));
     }
 
         useEffect(() => {
@@ -66,6 +69,14 @@ const LineChart = ({ hospital_pk }) => {
                     backgroundColor: 'rgb(255, 0, 0)',
                     borderColor: 'rgba(255, 102, 102, 0.2)'
                 },
+                {
+                    label: '% ICU patients with suspected/confirmed COVID',
+                    data: y4Data,
+                    fill: false,
+                    backgroundColor: 'rgb(215, 51, 255)',
+                    borderColor: 'rgba(255, 51, 246, 0.2)'
+                    
+                }
             ],
         }
 

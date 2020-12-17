@@ -8,7 +8,8 @@ import LineChart from './LineChart';
 import {
     percentBedsFull,
     percentICUFull,
-    percentCOVID
+    percentCOVID,
+    percentCOVID_ICU
 } from '../metrics';
 import { toTitleCase, weekToString } from '../helpers/formatters';
 
@@ -36,9 +37,11 @@ export default function CapacityTable() {
 
             // calculate metrics and format data for display in table
             const formattedData = latestData.map((row) => {
+
                 const percent_beds_full = percentBedsFull(row);
                 const percent_icu_full = percentICUFull(row);
                 const percent_covid = percentCOVID(row);
+                const percent_icu_covid = percentCOVID_ICU(row);
                 const empty = '-';
 
                 return (
@@ -49,6 +52,7 @@ export default function CapacityTable() {
                         percent_beds_full: percent_beds_full ? percent_beds_full + '%' : empty,
                         percent_icu_full: percent_icu_full ? percent_icu_full + '%' : empty,
                         percent_covid: percent_covid ? percent_covid + '%' : empty,
+                        percent_icu_covid: percent_icu_covid ? percent_icu_covid + '%' : empty,
                         collection_week: weekToString(row.collection_week)
                     }
                 )
@@ -127,6 +131,12 @@ export default function CapacityTable() {
         {
             dataField: 'percent_covid',
             text: '% of admitted patients with suspected or confirmed COVID',
+            sort: false,
+            sortFunc: sortFunc
+        },
+        {
+            dataField: 'percent_icu_covid',
+            text: '% of ICU patients with suspected or confirmed COVID',
             sort: false,
             sortFunc: sortFunc
         },
