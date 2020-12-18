@@ -53,9 +53,13 @@ export default function CapacityTable() {
                         city: toTitleCase(row.city),
                         fips_code: row.fips_code,
                         percent_beds_full: percent_beds_full ? percent_beds_full + '%' : empty,
+                        all_adult_hospital_inpatient_beds: Math.round(row.all_adult_hospital_inpatient_beds),
                         percent_icu_full: percent_icu_full ? percent_icu_full + '%' : empty,
+                        total_staffed_adult_icu_beds: Math.round(row.total_staffed_adult_icu_beds),
                         percent_covid: percent_covid ? percent_covid + '%' : empty,
+                        total_covid_patients: Math.round(row.total_adult_patients_hospitalized_confirmed_and_suspected_covid),
                         percent_icu_covid: percent_icu_covid ? percent_icu_covid + '%' : empty,
+                        total_icu_covid_patients: Math.round(row.staffed_icu_adult_patients_confirmed_and_suspected_covid),
                         collection_week: weekToString(row.collection_week)
                     }
                 )
@@ -99,6 +103,11 @@ export default function CapacityTable() {
         return b - a; // desc
     };
 
+    // column style
+    const columnStyle = (cell, row, rowIndex, colIndex) => {
+        return { cursor: 'pointer' }
+    };
+
     // data settings for capacity table
     const defaultSorted = [{
         dataField: 'hospital_name',
@@ -115,46 +124,57 @@ export default function CapacityTable() {
         {
             dataField: 'hospital_name',
             text: 'Hospital Name',
-            sort: true
+            sort: true,
+            style: columnStyle
         },
         {
             dataField: 'city',
             text: 'City',
-            sort: true
+            sort: true,
+            style: columnStyle
         },
         {
             dataField: 'percent_beds_full',
             text: '% of adult inpatient beds occupied',
             sort: false,
-            sortFunc: sortFunc
+            sortFunc: sortFunc,
+            style: columnStyle
         },
         {
             dataField: 'percent_icu_full',
             text: '% of adult ICU beds occupied',
             sort: false,
-            sortFunc: sortFunc
+            sortFunc: sortFunc,
+            style: columnStyle
         },
         {
             dataField: 'percent_covid',
             text: '% of admitted patients with suspected or confirmed COVID',
             sort: false,
-            sortFunc: sortFunc
+            sortFunc: sortFunc,
+            style: columnStyle
         },
         {
             dataField: 'percent_icu_covid',
             text: '% of ICU patients with suspected or confirmed COVID',
             sort: false,
-            sortFunc: sortFunc
+            sortFunc: sortFunc,
+            style: columnStyle
         },
         {
             dataField: 'collection_week',
             text: 'Latest Collection Week',
+            style: columnStyle
         }];
 
     // component to show when a row is expanded
     const expandRow = {
         renderer: row => (
-            <LineChart hospital_pk={row.hospital_pk} />
+            <>
+                <LineChart hospital_pk={row.hospital_pk} />
+                <br />
+                <p className="text-center">Data is aggregated by HHS on a weekly basis <a href="https://healthdata.gov/dataset/covid-19-reported-patient-impact-and-hospital-capacity-facility" target="_blank">(more info)</a>.</p>
+            </>
         )
     };
 
