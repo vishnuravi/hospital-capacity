@@ -15,16 +15,8 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING(2),
       allowNull: true
     },
-    ccn: {
-      type: DataTypes.STRING(10),
-      allowNull: true
-    },
     hospital_name: {
       type: DataTypes.STRING(77),
-      allowNull: true
-    },
-    address: {
-      type: DataTypes.STRING(50),
       allowNull: true
     },
     city: {
@@ -40,10 +32,6 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true
     },
     fips_code: {
-      type: DataTypes.STRING(5),
-      allowNull: true
-    },
-    is_metro_micro: {
       type: DataTypes.STRING(5),
       allowNull: true
     },

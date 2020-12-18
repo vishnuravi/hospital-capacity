@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import BootstrapTable from 'react-bootstrap-table-next';
+import Spinner from 'react-bootstrap/Spinner';
 import StateSelect from './StateSelect';
-//import CitySelect from './CitySelect';
 import CountySelect from './CountySelect';
 import LineChart from './LineChart';
 import {
@@ -18,7 +18,6 @@ export default function CapacityTable() {
     const [data, setData] = useState();
     const [tableData, setTableData] = useState([]);
     const [state, setState] = useState();
-    const [city, setCity] = useState();
     const [county, setCounty] = useState();
     const [isLoading, setIsLoading] = useState(false);
 
@@ -58,7 +57,7 @@ export default function CapacityTable() {
                         collection_week: weekToString(row.collection_week)
                     }
                 )
-            })
+            });
 
             // load the data into the state and display it in the table
             setData(formattedData);
@@ -72,21 +71,12 @@ export default function CapacityTable() {
 
     // fetch new data and clear city selection when user selects a new state
     useEffect(() => {
-        //setCity();
         setCounty();
-        getData();
+        if (state) {
+            getData();
+        }
     }, [state])
 
-    //filter out data when user selects a new city
-    useEffect(() => {
-        if (state) {
-            if (city) {
-                setTableData(data.filter((row) => row.city.toLowerCase() === city.value.toLowerCase()));
-            } else {
-                setTableData(data);
-            }
-        }
-    }, [city])
 
     //filter out data when user selects a new county
     useEffect(() => {
@@ -169,10 +159,16 @@ export default function CapacityTable() {
     return (
         <>
             <StateSelect setState={setState} state={state} isLoading={isLoading} />
-            { !isLoading && state &&
+            { isLoading ?
+                <div className="text-center mt-4">
+                    <Spinner animation="border" size="lg" role="status">
+                        <span className="sr-only">Loading...</span>
+                    </Spinner>
+                </div>
+                :
+                state &&
                 <>
-                    {/* <CitySelect setCity={setCity} city={city} data={tableData} isLoading={isLoading} /> */}
-                    <CountySelect setCounty={setCounty} county={county} state={state} data={tableData} isLoading={isLoading} /> 
+                    <CountySelect setCounty={setCounty} county={county} state={state} data={tableData} isLoading={isLoading} />
                     <div id="table-container">
                         <p className="lead text-center mt-3 mb-3">
                             📈 Click on any row to graph data from July 2020 to present.</p>
