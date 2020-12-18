@@ -27,8 +27,10 @@ export default function CapacityTable() {
             const results = await axios.get(`${process.env.REACT_APP_API_URL}/hospitals/state/${state.value}`);
             const data = results.data;
 
+            console.log(data);
+
             // extract only acute care facilities
-            const acuteCareData = data.filter((row) => row.hospital_subtype === "Short Term" || row.hospital_subtype === "Critical Access Hospital");
+            const acuteCareData = data.filter((row) => row.hospital_subtype.toLowerCase() === "short term" || row.hospital_subtype.toLowerCase() === "critical access hospitals");
 
             // extract only the latest week's data
             const latestData = acuteCareData.filter((data, index, self) =>
