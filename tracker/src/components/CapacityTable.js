@@ -170,17 +170,22 @@ export default function CapacityTable() {
                 <>
                     <CountySelect setCounty={setCounty} county={county} state={state} data={tableData} isLoading={isLoading} />
                     <div id="table-container">
-                        <p className="lead text-center mt-3 mb-3">
-                            📈 Click on any row to graph data from July 2020 to present.</p>
-                        <BootstrapTable
-                            wrapperClasses="table-responsive"
-                            hover
-                            keyField='hospital_pk'
-                            data={tableData}
-                            columns={columns}
-                            defaultSorted={defaultSorted}
-                            expandRow={expandRow}
-                        />
+                        {tableData.length ?
+                            <>
+                                <p className="lead text-center mt-3 mb-3">
+                                    📈 Click on any row to graph data from July 2020 to present.</p>
+                                <BootstrapTable
+                                    wrapperClasses="table-responsive"
+                                    hover
+                                    keyField='hospital_pk'
+                                    data={tableData}
+                                    columns={columns}
+                                    defaultSorted={defaultSorted}
+                                    expandRow={expandRow}
+                                />
+                            </>
+                            : <h5 className="text-center mt-4 lead">No data found for the selected region.</h5>
+                        }
                     </div>
                 </>
             }

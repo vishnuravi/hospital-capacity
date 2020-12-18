@@ -12,11 +12,11 @@ const CountySelect = ({ county, state, setCounty, isLoading }) => {
 
     useEffect(() => {
         // get all counties for the current state from the dataset
-        const countiesByState = counties.filter((county) => county.state_abbr === state.value)
+        const countiesByState = counties.filter((county) => county.state === state.value)
         const newCountyList = countiesByState.map((county) => {
             return ({
                 value: county.fips,
-                label: county.county_name
+                label: county.county
             })
         })
         setCountyList(newCountyList);

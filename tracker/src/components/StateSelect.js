@@ -14,7 +14,7 @@ const StateSelect = ({ state, setState, isLoading }) => {
                 onChange={selectedState => handleStateChange(selectedState)}
                 options={stateList.states} 
                 isLoading={isLoading}
-                placeholder="Choose a state"
+                placeholder="Select a state..."
                 className="mx-auto col-lg-4 mb-1"
             />
         </>

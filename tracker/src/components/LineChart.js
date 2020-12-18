@@ -22,7 +22,6 @@ const LineChart = ({ hospital_pk }) => {
         const results = await axios.get(`${process.env.REACT_APP_API_URL}/hospitals/id/${hospital_pk}`);
         const dataArray = results.data;
 
-
         // remove redacted (negative) data points.
         dataArray.map((row) => {
             return Object.keys(row).forEach((key) => {
@@ -33,7 +32,7 @@ const LineChart = ({ hospital_pk }) => {
         })
 
         // set the data for the axes
-        setXData(dataArray.map(row => new Date(row.collection_week).toLocaleDateString('en-US', { month: 'short', day: 'numeric'})));
+        setXData(dataArray.map(row => new Date(row.collection_week).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric'})));
         setY1Data(dataArray.map(row => percentBedsFull(row)));
         setY2Data(dataArray.map(row => percentICUFull(row)));
         setY3Data(dataArray.map(row => percentCOVID(row)));
