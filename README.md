@@ -11,3 +11,11 @@ Live version can be seen at [hospitalbed.space](https://hospitalbed.space).
 - `/api` - RESTful API (Node.js/Express)
 - `/tracker` - Tracker web app (React)
 - `/data` - Scripts to download and process the dataset
+
+Please see READMEs in the above folders for further instructions.
+
+## Contributing
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+
+## License
+[MIT](https://choosealicense.com/licenses/mit/)
