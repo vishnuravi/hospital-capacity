@@ -28,40 +28,53 @@ app.get('/', (req, res) => {
   res.send('Hospital Capacity Tracker API - Running')
 });
 
-// Get all records for a zip code
-app.get('/hospitals/zip_code/:zip_code', async (req, res) => {
-  const result = await models.CapacityData.findAll({ where: { zip: req.params.zip_code }, order: [['hospital_name', 'ASC'], ['collection_week', 'DESC']] });
-  res.send(result);
-});
+app.get('/hospitals', async (req, res) => {
+  const filters = {};
+  if (req.query.zip) filters.zip = req.query.zip;
+  if (req.query.state) filters.state = req.query.state
+  if (req.query.fips_code) filters.fips_code = req.query.fips_code;
+  if (req.query.city) filters.city = { [Op.like]: '%' + req.query.city + '%' }
 
-// Get all records for a FIPS county code
-app.get('/hospitals/fips_code/:fips_code', async (req, res) => {
-  const result = await models.CapacityData.findAll({ where: { fips_code: req.params.fips_code }, order: [['hospital_name', 'ASC'], ['collection_week', 'DESC']] });
-  res.send(result);
-});
+  try {
+    let result = await models.CapacityData.findAll({
+      where: {
+        ...filters,
+        hospital_subtype: {
+          [Op.or]: ['Short Term', 'Critical Access Hospital']
+        }
+      },
+      order: [['hospital_name', 'ASC'], ['collection_week', 'DESC']]
+    });
 
-// Get all records for a city
-app.get('/hospitals/city/:city', async (req, res) => {
-  const result = await models.CapacityData.findAll({ where: { city: { [Op.like]: '%' + req.params.city + '%' } }, order: [['hospital_name', 'ASC'], ['collection_week', 'DESC']]});
-  res.send(result);
-});
+    if (result && req.query.latest_week) {
+      // extract only the latest week's data
+      result = result.filter((data, index, self) =>
+        index === self.findIndex((row) => (row.hospital_pk === data.hospital_pk))
+      );
+    }
 
-// Get all records for a state
-app.get('/hospitals/state/:state', async (req, res) => {
-  const result = await models.CapacityData.findAll({ where: { state: req.params.state }, order: [['hospital_name', 'ASC'], ['collection_week', 'DESC']]});
-  res.send(result);
+    res.send(result);
+
+  } catch (error) {
+    next(error);
+  }
+
 });
 
 // Get all records for a hospital by id
-app.get('/hospitals/id/:id', async (req, res) => {
-  const result = await models.CapacityData.findAll({ where: { hospital_pk: req.params.id }, order: [['collection_week', 'ASC']]});
-  res.send(result);
-});
+app.get('/hospitals/:hospital_pk', async (req, res) => {
 
-// Get latest record for a hospital by id
-app.get('/hospitals/id/latest/:id', async (req, res) => {
-  const result = await models.CapacityData.findOne({ where: { hospital_pk: req.params.id }, order: [['collection_week', 'DESC']]});
-  res.send(result);
+  try {
+    let result;
+    if (req.query.latest_week) {
+      result = await models.CapacityData.findOne({ where: { hospital_pk: req.params.hospital_pk }, order: [['collection_week', 'ASC']] });
+    } else {
+      result = await models.CapacityData.findAll({ where: { hospital_pk: req.params.hospital_pk }, order: [['collection_week', 'ASC']] });
+    }
+    res.send(result);
+  } catch (error) {
+    next(error);
+  }
 });
 
 // Error handler
@@ -72,7 +85,5 @@ app.use((err, req, res, next) => {
   res.status(500);
   res.render('error', { error: err });
 });
-
-
 
 module.exports = app;

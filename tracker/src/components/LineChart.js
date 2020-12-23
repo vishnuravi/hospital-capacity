@@ -19,7 +19,7 @@ const LineChart = ({ hospital_pk }) => {
     const getData = async () => {
 
         // get all records for the particular hospital
-        const results = await axios.get(`${process.env.REACT_APP_API_URL}/hospitals/id/${hospital_pk}`);
+        const results = await axios.get(`${process.env.REACT_APP_API_URL}/hospitals/${hospital_pk}`);
         const dataArray = results.data;
 
         // remove redacted (negative) data points.

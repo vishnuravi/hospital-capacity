@@ -24,19 +24,10 @@ export default function CapacityTable() {
     const getData = async () => {
         setIsLoading(true);
         try {
-            const results = await axios.get(`${process.env.REACT_APP_API_URL}/hospitals/state/${state.value}`);
-            const data = results.data;
-
-            // extract only acute care facilities
-            const acuteCareData = data.filter((row) => row.hospital_subtype.toLowerCase() === "short term" || row.hospital_subtype.toLowerCase() === "critical access hospitals");
-
-            // extract only the latest week's data
-            const latestData = acuteCareData.filter((data, index, self) =>
-                index === self.findIndex((row) => (row.hospital_pk === data.hospital_pk))
-            );
+            const results = await axios.get(`${process.env.REACT_APP_API_URL}/hospitals/?state=${state.value}&latest_week=true`);
 
             // calculate metrics and format data for display in table
-            const formattedData = latestData.map((row) => {
+            const formattedData = results.data.map((row) => {
 
                 const percent_beds_full = percentBedsFull(row);
                 const percent_icu_full = percentICUFull(row);
