@@ -30,8 +30,8 @@ const CountySelect = ({ county, state, setCounty, isLoading }) => {
                 options={countyList}
                 isLoading={isLoading}
                 isClearable={true}
-                placeholder="Select a county..."
-                className="mx-auto col-lg-4"
+                placeholder="Search by county..."
+                className="mx-auto col-lg-4 mb-1"
             />
         </>
     )

@@ -4,6 +4,7 @@ import BootstrapTable from 'react-bootstrap-table-next';
 import Spinner from 'react-bootstrap/Spinner';
 import StateSelect from './StateSelect';
 import CountySelect from './CountySelect';
+import HospitalSelect from './HospitalSelect';
 import LineChart from './LineChart';
 import {
     percentBedsFull,
@@ -19,6 +20,7 @@ export default function CapacityTable() {
     const [tableData, setTableData] = useState([]);
     const [state, setState] = useState();
     const [county, setCounty] = useState();
+    const [hospital, setHospital] = useState();
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
@@ -66,7 +68,7 @@ export default function CapacityTable() {
         }
     };
 
-    // fetch new data and clear city selection when user selects a new state
+    // fetch new data and clear county selection when user selects a new state
     useEffect(() => {
         setCounty();
         if (state) {
@@ -75,16 +77,29 @@ export default function CapacityTable() {
     }, [state])
 
 
-    //filter out data when user selects a new county
+    //filter by county
     useEffect(() => {
         if (state) {
             if (county) {
+                setHospital(null);
                 setTableData(data.filter((row) => row.fips_code.includes(county.value)));
             } else {
-                setTableData(data);
+                if (!hospital) setTableData(data);
             }
         }
     }, [county])
+
+    //filter by hospital
+    useEffect(() => {
+        if(state){
+            if(hospital){
+                setCounty(null);
+                setTableData(data.filter((row) => row.hospital_pk === hospital.value));
+            } else {
+                if (!county) setTableData(data);
+            }
+        }
+    }, [hospital])
 
     // sorting function for table
     const sortFunc = (a, b, order, dataField, rowA, rowB) => {
@@ -178,11 +193,15 @@ export default function CapacityTable() {
                     state &&
                     <>
                         <CountySelect setCounty={setCounty} county={county} state={state} data={tableData} isLoading={isLoading} />
+                        <HospitalSelect setHospital={setHospital} hospital={hospital} state={state} data={tableData} isLoading={isLoading} />
                         <div id="table-container">
                             {tableData.length ?
                                 <>
-                                    <p className="lead text-center mt-3 mb-3">
-                                        📈 Click on any row to graph data from July 2020 to present.</p>
+                                    <div className="text-center">
+                                        <p className="lead pt-2 pb-2 mt-3 mb-3">
+                                            📈 click on any row below to graph data from July 2020 to present
+                                        </p>
+                                    </div>
                                     <BootstrapTable
                                         wrapperClasses="table-responsive"
                                         hover
