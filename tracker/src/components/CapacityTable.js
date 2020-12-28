@@ -12,7 +12,7 @@ import {
     percentCOVID,
     percentCOVID_ICU
 } from '../metrics';
-import { toTitleCase, weekToString } from '../helpers/formatters';
+import { toTitleCase, weekToString, percentToColor } from '../helpers/formatters';
 
 export default function CapacityTable() {
 
@@ -114,6 +114,10 @@ export default function CapacityTable() {
         return { cursor: 'pointer' }
     };
 
+    const percentStyle = (cell) => {
+        return { backgroundColor: cell !== '-' && percentToColor(cell.slice(0,-1)), cursor: 'pointer' }
+    };
+
     // data settings for capacity table
     const defaultSorted = [{
         dataField: 'hospital_name',
@@ -144,14 +148,14 @@ export default function CapacityTable() {
             text: '% of adult inpatient beds occupied',
             sort: false,
             sortFunc: sortFunc,
-            style: columnStyle
+            style: percentStyle
         },
         {
             dataField: 'percent_icu_full',
             text: '% of adult ICU beds occupied',
             sort: false,
             sortFunc: sortFunc,
-            style: columnStyle
+            style: percentStyle
         },
         {
             dataField: 'percent_covid',
