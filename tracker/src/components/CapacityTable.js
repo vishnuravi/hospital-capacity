@@ -20,9 +20,11 @@ export default function CapacityTable() {
     const [state, setState] = useState();
     const [county, setCounty] = useState();
     const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
 
     const getData = async () => {
         setIsLoading(true);
+        setError(null);
         try {
             const results = await axios.get(`${process.env.REACT_APP_API_URL}/hospitals/?state=${state.value}&latest_week=true`);
 
@@ -59,8 +61,8 @@ export default function CapacityTable() {
             setTableData(formattedData);
             setIsLoading(false);
         } catch (error) {
-            console.log(error);
             setIsLoading(false);
+            setError(error);
         }
     };
 
@@ -158,13 +160,7 @@ export default function CapacityTable() {
 
     // component to show when a row is expanded
     const expandRow = {
-        renderer: row => (
-            <>
-                <LineChart hospital_pk={row.hospital_pk} />
-                <br />
-                <p className="text-center">Data is aggregated by HHS on a weekly basis <a href="https://healthdata.gov/dataset/covid-19-reported-patient-impact-and-hospital-capacity-facility" target="_blank">(more info)</a>.</p>
-            </>
-        )
+        renderer: row => <LineChart hospital_pk={row.hospital_pk} />
     };
 
     return (
@@ -176,29 +172,31 @@ export default function CapacityTable() {
                         <span className="sr-only">Loading...</span>
                     </Spinner>
                 </div>
-                :
-                state &&
-                <>
-                    <CountySelect setCounty={setCounty} county={county} state={state} data={tableData} isLoading={isLoading} />
-                    <div id="table-container">
-                        {tableData.length ?
-                            <>
-                                <p className="lead text-center mt-3 mb-3">
-                                    📈 Click on any row to graph data from July 2020 to present.</p>
-                                <BootstrapTable
-                                    wrapperClasses="table-responsive"
-                                    hover
-                                    keyField='hospital_pk'
-                                    data={tableData}
-                                    columns={columns}
-                                    defaultSorted={defaultSorted}
-                                    expandRow={expandRow}
-                                />
-                            </>
-                            : <h5 className="text-center mt-4 lead">No data found for the selected region.</h5>
-                        }
-                    </div>
-                </>
+                : error ?
+                    <p className="lead text-center mt-4">Error retrieving data.</p>
+                    :
+                    state &&
+                    <>
+                        <CountySelect setCounty={setCounty} county={county} state={state} data={tableData} isLoading={isLoading} />
+                        <div id="table-container">
+                            {tableData.length ?
+                                <>
+                                    <p className="lead text-center mt-3 mb-3">
+                                        📈 Click on any row to graph data from July 2020 to present.</p>
+                                    <BootstrapTable
+                                        wrapperClasses="table-responsive"
+                                        hover
+                                        keyField='hospital_pk'
+                                        data={tableData}
+                                        columns={columns}
+                                        defaultSorted={defaultSorted}
+                                        expandRow={expandRow}
+                                    />
+                                </>
+                                : <h5 className="text-center mt-4 lead">No data found for the selected region.</h5>
+                            }
+                        </div>
+                    </>
             }
         </>
     )
