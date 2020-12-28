@@ -7,6 +7,9 @@ const sequelize = require('./database/connect');
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 
+const passport = require("passport");
+const HeaderAPIKeyStrategy = require('passport-headerapikey').HeaderAPIKeyStrategy
+
 const app = express();
 
 // DB connection
@@ -23,43 +26,62 @@ app.use((req, res, next) => {
   next();
 });
 
+// Passport
+passport.use(new HeaderAPIKeyStrategy(
+  { header: 'Authorization', prefix: 'Api-Key ' },
+  false,
+  function (apikey, done) {
+    if (apikey === process.env.API_KEY) {
+      return done(null, true);
+    } else {
+      return done(null, false);
+    }
+  })
+);
+
 // Routes
 app.get('/', (req, res) => {
-  res.send('Hospital Capacity Tracker API - Running')
+  res.send('Hospital Capacity Tracker API');
 });
 
-app.get('/hospitals', async (req, res) => {
-  const filters = {};
-  if (req.query.zip) filters.zip = req.query.zip;
-  if (req.query.state) filters.state = req.query.state
-  if (req.query.fips_code) filters.fips_code = req.query.fips_code;
-  if (req.query.city) filters.city = { [Op.like]: '%' + req.query.city + '%' }
+app.get('/unauthorized', (req, res) => {
+  res.send(401, 'Invalid API Key');
+})
 
-  try {
-    let result = await models.CapacityData.findAll({
-      where: {
-        ...filters,
-        hospital_subtype: {
-          [Op.or]: ['Short Term', 'Critical Access Hospital']
-        }
-      },
-      order: [['hospital_name', 'ASC'], ['collection_week', 'DESC']]
-    });
+app.get('/hospitals',
+  passport.authenticate('headerapikey', { session: false, failureRedirect: '/unauthorized' }),
+  async (req, res) => {
+    const filters = {};
+    if (req.query.zip) filters.zip = req.query.zip;
+    if (req.query.state) filters.state = req.query.state
+    if (req.query.fips_code) filters.fips_code = req.query.fips_code;
+    if (req.query.city) filters.city = { [Op.like]: '%' + req.query.city + '%' }
 
-    if (result && req.query.latest_week) {
-      // extract only the latest week's data
-      result = result.filter((data, index, self) =>
-        index === self.findIndex((row) => (row.hospital_pk === data.hospital_pk))
-      );
+    try {
+      let result = await models.CapacityData.findAll({
+        where: {
+          ...filters,
+          hospital_subtype: {
+            [Op.or]: ['Short Term', 'Critical Access Hospital']
+          }
+        },
+        order: [['hospital_name', 'ASC'], ['collection_week', 'DESC']]
+      });
+
+      if (result && req.query.latest_week) {
+        // extract only the latest week's data
+        result = result.filter((data, index, self) =>
+          index === self.findIndex((row) => (row.hospital_pk === data.hospital_pk))
+        );
+      }
+
+      res.send(result);
+
+    } catch (error) {
+      next(error);
     }
 
-    res.send(result);
-
-  } catch (error) {
-    next(error);
-  }
-
-});
+  });
 
 // Get all records for a hospital by id
 app.get('/hospitals/:hospital_pk', async (req, res) => {
