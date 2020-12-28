@@ -14,6 +14,7 @@ const StateSelect = ({ state, setState, isLoading }) => {
                 onChange={selectedState => handleStateChange(selectedState)}
                 options={stateList.states} 
                 isLoading={isLoading}
+                isClearable={true}
                 placeholder="Select a state..."
                 className="mx-auto col-lg-4 mb-1"
             />
