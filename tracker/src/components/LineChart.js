@@ -1,7 +1,7 @@
 import { Line } from 'react-chartjs-2';
 import { useState, useEffect } from 'react';
 import { Spinner } from 'react-bootstrap';
-import axios from 'axios';
+import API from '../services/API';
 import {
     percentBedsFull,
     percentICUFull,
@@ -29,7 +29,7 @@ const LineChart = ({ hospital_pk }) => {
 
         // get all records for the particular hospital
         try {
-            const results = await axios.get(`${process.env.REACT_APP_API_URL}/hospitals/${hospital_pk}`);
+            const results = await API.get(`/hospitals/${hospital_pk}`);
             const dataArray = results.data;
 
             // remove redacted (negative) data points.

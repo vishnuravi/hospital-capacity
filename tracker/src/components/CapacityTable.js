@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import API from '../services/API';
 import BootstrapTable from 'react-bootstrap-table-next';
 import Spinner from 'react-bootstrap/Spinner';
 import StateSelect from './StateSelect';
@@ -26,7 +26,7 @@ export default function CapacityTable() {
         setIsLoading(true);
         setError(null);
         try {
-            const results = await axios.get(`${process.env.REACT_APP_API_URL}/hospitals/?state=${state.value}&latest_week=true`);
+            const results = await API.get(`/hospitals/?state=${state.value}&latest_week=true`);
 
             // calculate metrics and format data for display in table
             const formattedData = results.data.map((row) => {
