@@ -8,7 +8,7 @@ export function weekToString(startDay){
     const startDate = new Date(startDay);
     const endDate = new Date();
     endDate.setDate(startDate.getDate() + 7);
-    return startDate.toLocaleDateString() + ' to ' + endDate.toLocaleDateString();
+    return endDate.toLocaleDateString();
 }
 
 export function percentToColor(percent){

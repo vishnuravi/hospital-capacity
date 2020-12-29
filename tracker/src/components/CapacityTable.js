@@ -102,7 +102,7 @@ export default function CapacityTable() {
     }, [hospital])
 
     // sorting function for table
-    const sortFunc = (a, b, order, dataField, rowA, rowB) => {
+    const sortFunc = (a, b, order) => {
         if (order === 'asc') {
             return a - b;
         }
@@ -110,7 +110,7 @@ export default function CapacityTable() {
     };
 
     // column style
-    const columnStyle = (cell, row, rowIndex, colIndex) => {
+    const columnStyle = () => {
         return { cursor: 'pointer' }
     };
 
@@ -162,18 +162,18 @@ export default function CapacityTable() {
             text: '% of admitted patients with suspected or confirmed COVID',
             sort: false,
             sortFunc: sortFunc,
-            style: columnStyle
+            style: percentStyle
         },
         {
             dataField: 'percent_icu_covid',
             text: '% of ICU patients with suspected or confirmed COVID',
             sort: false,
             sortFunc: sortFunc,
-            style: columnStyle
+            style: percentStyle
         },
         {
             dataField: 'collection_week',
-            text: 'Latest Collection Week',
+            text: 'Collection Week Ending On',
             style: columnStyle
         }];
 
