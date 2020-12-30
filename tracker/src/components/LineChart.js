@@ -65,14 +65,14 @@ const LineChart = ({ hospital_pk }) => {
         labels: xData,
         datasets: [
             {
-                label: '% ICU Beds Filled',
+                label: '% Inpatient Beds Filled',
                 data: yData.y1,
                 fill: false,
                 backgroundColor: 'rgb(255, 255, 0)',
                 borderColor: 'rgba(255, 128, 0, 0.2)',
             },
             {
-                label: '% Inpatient Beds Filled',
+                label: '% ICU Beds Filled',
                 data: yData.y2,
                 fill: false,
                 backgroundColor: 'rgb(0,0,204)',
