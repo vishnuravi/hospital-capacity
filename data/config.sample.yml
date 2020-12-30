@@ -16,6 +16,7 @@ dataset:
     - zip
     - hospital_subtype
     - fips_code
+    - is_metro_micro
     - total_beds_7_day_avg
     - all_adult_hospital_inpatient_beds_7_day_avg
     - inpatient_beds_used_7_day_avg
