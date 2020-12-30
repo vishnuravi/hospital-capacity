@@ -123,11 +123,7 @@ const LineChart = ({ hospital_pk }) => {
                 : error ?
                     <p className="text-center">Error retrieving data.</p>
                     :
-                    <>
-                        <Line data={chartData} options={options} />
-                        <br />
-                        <p className="text-center">Data is aggregated by HHS on a weekly basis <a href="https://healthdata.gov/dataset/covid-19-reported-patient-impact-and-hospital-capacity-facility" target="_blank">(more info)</a>.</p>
-                    </>
+                    <Line data={chartData} options={options} />
             }
         </>
     )

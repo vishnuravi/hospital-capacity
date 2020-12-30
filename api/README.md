@@ -2,18 +2,18 @@
 
 ## Installation
 
-Create a `.env` file from the included sample `.env.sample` with settings for your MySQL database.
+Create a `.env` file from the included sample `.env.sample` with settings for your MySQL database and API key for the tracker app.
 
 Install dependencies
 
 ```bash
-npm install
+yarn
 ```
 
-Start the application
+Start locally
 
 ```bash
-npm start
+node app.local.js
 ```
 
 ## Contributing
