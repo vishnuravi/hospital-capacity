@@ -70,7 +70,8 @@ export default function CapacityTable() {
 
     // fetch new data and clear county selection when user selects a new state
     useEffect(() => {
-        setCounty();
+        setCounty(null);
+        setHospital(null);
         if (state) {
             getData();
         }
