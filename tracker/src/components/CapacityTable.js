@@ -159,14 +159,14 @@ export default function CapacityTable() {
         },
         {
             dataField: 'percent_covid',
-            text: '% of admitted patients with suspected or confirmed COVID',
+            text: '% of admitted patients with COVID',
             sort: false,
             sortFunc: sortFunc,
             style: percentStyle
         },
         {
             dataField: 'percent_icu_covid',
-            text: '% of ICU patients with suspected or confirmed COVID',
+            text: '% of ICU patients with COVID',
             sort: false,
             sortFunc: sortFunc,
             style: percentStyle

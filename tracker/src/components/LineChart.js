@@ -79,14 +79,14 @@ const LineChart = ({ hospital_pk }) => {
                 borderColor: 'rgba(0, 102, 204, 0.2)',
             },
             {
-                label: '% of admitted patients with suspected/confirmed COVID',
+                label: '% of admitted patients with COVID',
                 data: yData.y3,
                 fill: false,
                 backgroundColor: 'rgb(255, 0, 0)',
                 borderColor: 'rgba(255, 102, 102, 0.2)'
             },
             {
-                label: '% ICU patients with suspected/confirmed COVID',
+                label: '% ICU patients with COVID',
                 data: yData.y4,
                 fill: false,
                 backgroundColor: 'rgb(215, 51, 255)',
