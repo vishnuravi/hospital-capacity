@@ -12,7 +12,11 @@ import {
     percentCOVID,
     percentCOVID_ICU
 } from '../metrics';
-import { toTitleCase, weekToString, percentToColor } from '../helpers/formatters';
+import { 
+    toTitleCase, 
+    formatCollectionWeek, 
+    percentToColor 
+} from '../helpers/formatters';
 
 export default function CapacityTable() {
 
@@ -53,7 +57,7 @@ export default function CapacityTable() {
                         total_covid_patients: Math.round(row.total_adult_patients_hospitalized_confirmed_and_suspected_covid),
                         percent_icu_covid: percent_icu_covid ? percent_icu_covid + '%' : empty,
                         total_icu_covid_patients: Math.round(row.staffed_icu_adult_patients_confirmed_and_suspected_covid),
-                        collection_week: weekToString(row.collection_week)
+                        collection_week: formatCollectionWeek(row.collection_week)
                     }
                 )
             });
