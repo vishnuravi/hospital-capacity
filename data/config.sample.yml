@@ -4,7 +4,7 @@ mysql:
   passwd: 
   db: HospitalTracker
 dataset:
-  url: https://healthdata.gov/sites/default/files/reported_hospital_capacity_admissions_facility_level_weekly_average_timeseries_20201215.csv
+  url: https://healthdata.gov/api/3/action/package_show?id=d475cc4e-83cd-4c16-be57-9105f300e0bc&page=0
   columns:
     - hospital_pk
     - collection_week
