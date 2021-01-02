@@ -7,10 +7,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-h1 h2 h3 h4 {
-  font-family: 'Roboto'
-}
-
 .caret {
   display: inline-block;
   width: 0;
@@ -29,4 +25,16 @@ h1 h2 h3 h4 {
   border-bottom: 4px dashed;
   border-bottom: 4px solid \9;
   content: "";
+}
+
+.table-instructions {
+  background: #f8f9fa;
+}
+
+.expanded-row {
+  background: #f8f9fa;
+}
+
+.footer-text {
+  font-size: small;
 }

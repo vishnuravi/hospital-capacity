@@ -184,7 +184,8 @@ export default function CapacityTable() {
 
     // component to show when a row is expanded
     const expandRow = {
-        renderer: row => <LineChart hospital_pk={row.hospital_pk} />
+        renderer: row => <LineChart hospital_pk={row.hospital_pk} />,
+        parentClassName: 'expanded-row'
     };
 
     return (
@@ -207,13 +208,12 @@ export default function CapacityTable() {
                             {tableData.length ?
                                 <>
                                     <div className="text-center">
-                                        <p className="lead pt-2 pb-2 mt-3 mb-3">
-                                            📈 click on any row below to graph data from July 2020 to present
+                                        <p className="lead pt-2 pb-2 mt-3 mb-3 table-instructions">
+                                            📈 click on any hospital below to graph data since July 2020
                                         </p>
                                     </div>
                                     <BootstrapTable
                                         wrapperClasses="table-responsive"
-                                        hover
                                         keyField='hospital_pk'
                                         data={tableData}
                                         columns={columns}
