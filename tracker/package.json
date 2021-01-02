@@ -9,6 +9,7 @@
     "axios": "^0.21.1",
     "bootstrap": "^4.5.3",
     "chart.js": "^2.9.4",
+    "query-string": "^6.13.8",
     "react": "^17.0.1",
     "react-bootstrap": "^1.4.0",
     "react-bootstrap-table-next": "^4.0.3",

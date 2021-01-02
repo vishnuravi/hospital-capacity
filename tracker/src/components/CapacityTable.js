@@ -6,19 +6,25 @@ import StateSelect from './StateSelect';
 import CountySelect from './CountySelect';
 import HospitalSelect from './HospitalSelect';
 import LineChart from './LineChart';
+import queryString from 'query-string';
 import {
     percentBedsFull,
     percentICUFull,
     percentCOVID,
     percentCOVID_ICU
 } from '../metrics';
-import { 
-    toTitleCase, 
-    formatCollectionWeek, 
-    percentToColor 
+import {
+    toTitleCase,
+    formatCollectionWeek,
+    percentToColor
 } from '../helpers/formatters';
+import {
+    getStateByAbbrev
+} from '../helpers/data';
 
 export default function CapacityTable() {
+
+    const query = queryString.parse(window.location.search);
 
     const [data, setData] = useState();
     const [tableData, setTableData] = useState([]);
@@ -72,12 +78,24 @@ export default function CapacityTable() {
         }
     };
 
+    // check if query string specifies a state, then set it
+    useEffect(() => {
+        if (query.state) {
+            const initialState = getStateByAbbrev(query.state);
+            if (initialState) {
+                setState(initialState);
+                getData();
+            }
+        }
+    }, [])
+
     // fetch new data and clear county and hospital selection when user selects a new state
     useEffect(() => {
         setCounty(null);
         setHospital(null);
         if (state) {
             getData();
+            window.history.replaceState({ state }, '', '?' + queryString.stringify({ state: state.value }));
         }
     }, [state])
 
@@ -96,8 +114,8 @@ export default function CapacityTable() {
 
     //filter by hospital
     useEffect(() => {
-        if(state){
-            if(hospital){
+        if (state) {
+            if (hospital) {
                 setCounty(null);
                 setTableData(data.filter((row) => row.hospital_pk === hospital.value));
             } else {
@@ -120,7 +138,7 @@ export default function CapacityTable() {
     };
 
     const percentStyle = (cell) => {
-        return { backgroundColor: cell !== '-' && percentToColor(cell.slice(0,-1)), cursor: 'pointer' }
+        return { backgroundColor: cell !== '-' && percentToColor(cell.slice(0, -1)), cursor: 'pointer' }
     };
 
     // data settings for capacity table
