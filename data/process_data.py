@@ -12,16 +12,14 @@ with open("config.yml", "r") as ymlfile:
 # Download dataset from healthcare.gov
 print('Starting csv file download...')
 url = config["dataset"]["url"]
-dataset_metadata = urllib.request.urlopen(url).read().decode()
-json = json.loads(dataset_metadata)
-url_to_csv = json["result"][0]["resources"][0]["url"]
-urllib.request.urlretrieve(url_to_csv, 'latest-data.csv')
+urllib.request.urlretrieve(url, 'latest-data.csv')
 
 # Extract columns we need
 print('Extracting columns from csv...')
 columns_to_keep = config["dataset"]["columns"]
 df = pd.read_csv('latest-data.csv', dtype=str)
 df = df[columns_to_keep]
+df['collection_week'] = pd.to_datetime(df['collection_week'], infer_datetime_format=True) 
 df.to_csv("processed-data.csv", index=False, index_label=False)
 os.remove('latest-data.csv')
 
