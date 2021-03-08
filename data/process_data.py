@@ -19,8 +19,9 @@ print('Extracting columns from csv...')
 columns_to_keep = config["dataset"]["columns"]
 df = pd.read_csv('latest-data.csv', dtype=str)
 df = df[columns_to_keep]
+df['collection_week'] = pd.to_datetime(df['collection_week'], infer_datetime_format=True) 
 df.to_csv("processed-data.csv", index=False, index_label=False)
-#os.remove('latest-data.csv')
+os.remove('latest-data.csv')
 
 # Update database
 print('Updating data in database...')
