@@ -6,9 +6,8 @@ export function toTitleCase(str) {
 }
 
 export function formatCollectionWeek(startDay){
-    // returns a string with the end date of the collection week
+    // returns a string with the start date of the collection week
     const date = new Date(startDay);
-    date.setDate(date.getDate() + 7);
     return date.toLocaleDateString();
 }
 

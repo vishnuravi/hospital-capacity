@@ -178,7 +178,7 @@ export default function CapacityTable() {
         },
         {
             dataField: 'collection_week',
-            text: 'Collection Week Ending On',
+            text: 'Collection Week Starting On',
             style: columnStyle
         }];
 
@@ -209,7 +209,7 @@ export default function CapacityTable() {
                                 <>
                                     <div className="text-center">
                                         <p className="lead pt-2 pb-2 mt-3 mb-3 table-instructions">
-                                            📈 click on any hospital below to graph data since July 2020
+                                            📈 click on any hospital below to graph data
                                         </p>
                                     </div>
                                     <BootstrapTable
