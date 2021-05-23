@@ -1,0 +1,29 @@
+mysql:
+  host: localhost
+  username: hospitaltracker
+  password: 
+  db: HospitalTracker
+dataset:
+  url: https://beta.healthdata.gov/api/views/anag-cw7u/rows.csv?accessType=DOWNLOAD
+  columns:
+    - hospital_pk
+    - collection_week
+    - state
+    - ccn
+    - hospital_name
+    - address
+    - city
+    - zip
+    - hospital_subtype
+    - fips_code
+    - is_metro_micro
+    - total_beds_7_day_avg
+    - all_adult_hospital_inpatient_beds_7_day_avg
+    - inpatient_beds_used_7_day_avg
+    - all_adult_hospital_inpatient_bed_occupied_7_day_avg
+    - total_adult_patients_hospitalized_confirmed_and_suspected_covid_7_day_avg
+    - total_adult_patients_hospitalized_confirmed_covid_7_day_avg
+    - total_staffed_adult_icu_beds_7_day_avg
+    - staffed_adult_icu_bed_occupancy_7_day_avg
+    - staffed_icu_adult_patients_confirmed_and_suspected_covid_7_day_avg
+    - staffed_icu_adult_patients_confirmed_covid_7_day_avg
