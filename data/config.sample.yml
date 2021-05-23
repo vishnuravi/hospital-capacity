@@ -1,7 +1,7 @@
 mysql:
   host: localhost
-  user: hospitaltracker
-  passwd: 
+  username: hospitaltracker
+  password: 
   db: HospitalTracker
 dataset:
   url: https://beta.healthdata.gov/api/views/anag-cw7u/rows.csv?accessType=DOWNLOAD
