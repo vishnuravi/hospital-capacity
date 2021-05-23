@@ -2,7 +2,7 @@
 
 ## Data Preparation Instructions
 
-Create a `config.yml` file based on the sample provided with your MYSQL database settings.
+Update `config.yml` with your MySQL database settings.
 
 Use the python script in this folder to process the dataset and insert it into your database.
 
