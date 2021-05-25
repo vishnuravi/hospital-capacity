@@ -1,12 +1,10 @@
 # Hospital Capacity Tracker
 
-This project visualizes US COVID-19 facility-level capacity data released [from healthdata.gov](https://healthdata.gov/Hospital/COVID-19-Reported-Patient-Impact-and-Hospital-Capa/anag-cw7u). The dataset was initially released the week of Dec 7, 2020 and is scheduled to be updated weekly.
+This project visualizes US COVID-19 facility-level capacity data released [from healthdata.gov](https://healthdata.gov/Hospital/COVID-19-Reported-Patient-Impact-and-Hospital-Capa/anag-cw7u).
 
 Live version can be seen at [hospitalbed.space](https://hospitalbed.space).
 
-## Screenshot
-
-<img width="824" alt="hospital-capacity-tracker-ss" src="https://user-images.githubusercontent.com/1212163/115063475-9e7c0b80-9eb9-11eb-963f-22f660230242.png">
+<img width="824" alt="hospital-capacity-tracker-ss" src="https://user-images.githubusercontent.com/1212163/119564878-40bfc680-bd77-11eb-81a7-3af9942d0380.png">
 
 # Project Structure
 
