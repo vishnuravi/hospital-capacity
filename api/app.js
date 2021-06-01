@@ -57,6 +57,10 @@ app.get('/hospitals',
     if (req.query.fips_code) filters.fips_code = req.query.fips_code;
     if (req.query.city) filters.city = { [Op.like]: '%' + req.query.city + '%' }
 
+    const pagination = {};
+    if (req.query.limit) pagination.limit = parseInt(req.query.limit);
+    if (req.query.offset) pagination.offset = parseInt(req.query.offset); 
+
     try {
       let result = await models.CapacityData.findAll({
         where: {
@@ -65,7 +69,8 @@ app.get('/hospitals',
             [Op.or]: ['Short Term', 'Critical Access Hospital']
           }
         },
-        order: [['hospital_name', 'ASC'], ['collection_week', 'DESC']]
+        order: [['hospital_name', 'ASC'], ['collection_week', 'DESC']],
+        ...pagination
       });
 
       if (result && req.query.latest_week) {
@@ -86,12 +91,28 @@ app.get('/hospitals',
 // Get all records for a hospital by id
 app.get('/hospitals/:hospital_pk', async (req, res) => {
 
+  const pagination = {}
+  if (req.query.limit) pagination.limit = parseInt(req.query.limit);
+  if (req.query.offset) pagination.offset = parseInt(req.query.offset);
+
   try {
     let result;
     if (req.query.latest_week) {
-      result = await models.CapacityData.findOne({ where: { hospital_pk: req.params.hospital_pk }, order: [['collection_week', 'ASC']] });
+      result = await models.CapacityData.findOne({ 
+        where: { 
+          hospital_pk: req.params.hospital_pk 
+        }, 
+        order: [['collection_week', 'ASC']],
+        ...pagination 
+      });
     } else {
-      result = await models.CapacityData.findAll({ where: { hospital_pk: req.params.hospital_pk }, order: [['collection_week', 'ASC']] });
+      result = await models.CapacityData.findAll({ 
+        where: { 
+          hospital_pk: req.params.hospital_pk 
+        }, 
+        order: [['collection_week', 'ASC']],
+        ...pagination 
+      });
     }
     res.send(result);
   } catch (error) {
