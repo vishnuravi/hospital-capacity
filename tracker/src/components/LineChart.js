@@ -22,6 +22,8 @@ const LineChart = ({ hospital_pk }) => {
         y4: []
     });
 
+    const [limit, setLimit] = useState(24);
+
     const getData = async () => {
 
         setIsLoading(true);
@@ -29,8 +31,8 @@ const LineChart = ({ hospital_pk }) => {
 
         // get all records for the particular hospital
         try {
-            const results = await API.get(`/hospitals/${hospital_pk}`);
-            const dataArray = results.data;
+            const results = await API.get(`/hospitals/${hospital_pk}/?limit=${limit}`);
+            const dataArray = results.data.rows.reverse();
 
             // remove redacted (negative) data points.
             dataArray.map((row) => {
