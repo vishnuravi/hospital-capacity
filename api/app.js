@@ -50,12 +50,16 @@ app.get('/unauthorized', (req, res) => {
 
 app.get('/hospitals',
   passport.authenticate('headerapikey', { session: false, failureRedirect: '/unauthorized' }),
-  async (req, res) => {
+  async (req, res, next) => {
     const filters = {};
     if (req.query.zip) filters.zip = req.query.zip;
     if (req.query.state) filters.state = req.query.state
     if (req.query.fips_code) filters.fips_code = req.query.fips_code;
     if (req.query.city) filters.city = { [Op.like]: '%' + req.query.city + '%' }
+
+    const pagination = {};
+    if (req.query.limit) pagination.limit = parseInt(req.query.limit);
+    if (req.query.offset) pagination.offset = parseInt(req.query.offset);
 
     try {
       let result = await models.CapacityData.findAll({
@@ -65,7 +69,8 @@ app.get('/hospitals',
             [Op.or]: ['Short Term', 'Critical Access Hospital']
           }
         },
-        order: [['hospital_name', 'ASC'], ['collection_week', 'DESC']]
+        order: [['hospital_name', 'ASC'], ['collection_week', 'DESC']],
+        ...pagination
       });
 
       if (result && req.query.latest_week) {
@@ -84,28 +89,45 @@ app.get('/hospitals',
   });
 
 // Get all records for a hospital by id
-app.get('/hospitals/:hospital_pk', async (req, res) => {
+app.get('/hospitals/:hospital_pk',
+  passport.authenticate('headerapikey', { session: false, failureRedirect: '/unauthorized' }),
+  async (req, res, next) => {
+    const pagination = {}
+    if (req.query.limit) pagination.limit = parseInt(req.query.limit);
+    if (req.query.offset) pagination.offset = parseInt(req.query.offset);
 
-  try {
-    let result;
-    if (req.query.latest_week) {
-      result = await models.CapacityData.findOne({ where: { hospital_pk: req.params.hospital_pk }, order: [['collection_week', 'ASC']] });
-    } else {
-      result = await models.CapacityData.findAll({ where: { hospital_pk: req.params.hospital_pk }, order: [['collection_week', 'ASC']] });
+    try {
+      let result;
+      if (req.query.latest_week) {
+        result = await models.CapacityData.findOne({
+          where: {
+            hospital_pk: req.params.hospital_pk
+          },
+          order: [['collection_week', 'ASC']],
+          ...pagination
+        });
+      } else {
+        result = await models.CapacityData.findAndCountAll({
+          where: {
+            hospital_pk: req.params.hospital_pk
+          },
+          order: [['collection_week', 'DESC']],
+          ...pagination
+        });
+      }
+      res.send(result);
+
+    } catch (error) {
+      next(error);
     }
-    res.send(result);
-  } catch (error) {
-    next(error);
-  }
-});
+  });
 
 // Error handler
 app.use((err, req, res, next) => {
   if (res.headersSent) {
     return next(err);
   }
-  res.status(500);
-  res.render('error', { error: err });
+  res.send(500, { error: err.message });
 });
 
 module.exports = app;
