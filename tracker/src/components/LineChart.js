@@ -1,6 +1,7 @@
 import { Line } from 'react-chartjs-2';
 import { useState, useEffect } from 'react';
 import { Spinner } from 'react-bootstrap';
+import { SegmentedControl } from 'segmented-control';
 import API from '../services/API';
 import {
     percentBedsFull,
@@ -22,7 +23,7 @@ const LineChart = ({ hospital_pk }) => {
         y4: []
     });
 
-    const [limit, setLimit] = useState(24);
+    const [limit, setLimit] = useState(24); // number of weeks to retrieve
 
     const getData = async () => {
 
@@ -61,7 +62,7 @@ const LineChart = ({ hospital_pk }) => {
 
     useEffect(() => {
         getData();
-    }, []);
+    }, [limit]);
 
     const chartData = {
         labels: xData,
@@ -116,17 +117,22 @@ const LineChart = ({ hospital_pk }) => {
 
     return (
         <>
-            { isLoading ?
-                <div className="text-center mt-4">
-                    <Spinner animation="border" size="lg" role="status">
-                        <span className="sr-only">Loading...</span>
-                    </Spinner>
-                </div>
-                : error ?
+            <div className="text-center">
+                <SegmentedControl
+                    name={hospital_pk + "_toggle"}
+                    options={[
+                        { label: "Last 6 Months", value: "24", default: true },
+                        { label: "Last Year", value: "48" }
+                    ]}
+                    setValue={newValue => setLimit(newValue)}
+                    style={{ fontSize: '1rem', width: 400, height: 50, color: '#333' }}
+                />
+                {error &&
                     <p className="text-center">Error retrieving data.</p>
-                    :
-                    <Line data={chartData} options={options} />
-            }
+                }
+            </div>
+            <Line data={chartData} options={options} />
+
         </>
     )
 }
