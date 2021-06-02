@@ -4,9 +4,9 @@ This project visualizes US COVID-19 facility-level capacity data released [from 
 
 Live version can be seen at [hospitalbed.space](https://hospitalbed.space).
 
-<img width="824" alt="hospital-capacity-tracker-ss" src="https://user-images.githubusercontent.com/1212163/119564878-40bfc680-bd77-11eb-81a7-3af9942d0380.png">
+<img alt="Screenshot" src="https://user-images.githubusercontent.com/1212163/120502796-bab40900-c390-11eb-9d9f-ac42d6b6e9c3.JPG">
 
-# Project Structure
+## Project Structure
 
 - `/api` - RESTful API (Node.js/Express)
 - `/tracker` - Tracker web app (React)
