@@ -110,7 +110,18 @@ const LineChart = ({ hospital_pk }) => {
                             return value + '%';
                         }
                     },
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Weekly Average (%)'
+                    }
                 },
+            ],
+            xAxes: [{
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Collection Week Starting Date'
+                }
+            }
             ],
         },
     }

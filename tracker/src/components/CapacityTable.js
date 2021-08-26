@@ -178,7 +178,7 @@ export default function CapacityTable() {
         },
         {
             dataField: 'collection_week',
-            text: 'Collection Week Starting On',
+            text: 'Collection Week Ending On',
             style: columnStyle
         }];
 
@@ -196,6 +196,10 @@ export default function CapacityTable() {
                     <Spinner animation="border" size="lg" role="status">
                         <span className="sr-only">Loading...</span>
                     </Spinner>
+                    <br />
+                    <br />
+                    <p className="lead">Calculating metrics...</p>
+                    <p>(This might take a little longer for larger states.)</p>
                 </div>
                 : error ?
                     <p className="lead text-center mt-4">Error retrieving data.</p>
