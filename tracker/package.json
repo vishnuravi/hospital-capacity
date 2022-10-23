@@ -17,7 +17,7 @@
     "react-scripts": "5.0.0",
     "react-select": "^5.5.1",
     "segmented-control": "^0.1.17",
-    "web-vitals": "^2.1.1"
+    "web-vitals": "^3.0.3"
   },
   "scripts": {
     "start": "react-scripts start",
