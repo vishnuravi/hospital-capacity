@@ -10,7 +10,7 @@
     "nodemon": "^2.0.6",
     "passport": "^0.6.0",
     "passport-headerapikey": "^1.2.2",
-    "sequelize": "^6.3.5",
+    "sequelize": "^6.28.2",
     "sequelize-auto": "^0.7.5"
   },
   "devDependencies": {},
